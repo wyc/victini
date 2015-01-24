@@ -71,7 +71,16 @@ func NewDraft(numPlayers int) (*Draft, error) {
 
 // Finished is true iff all players have chosen all their cards
 func (d Draft) Finished() bool {
-	return len(d.CardPacks) == 0
+	if len(d.CardPacks) > 0 {
+		return false
+	}
+
+	for _, player := range d.Players {
+		if len(player.CardPacks) != 0 {
+			return false
+		}
+	}
+	return true
 }
 
 func (draft Draft) PlayerAfter(player Player) Player {
