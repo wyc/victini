@@ -1,4 +1,5 @@
 import (
+	"net/http"
 	"time"
 
 	"labix.org/v2/mgo/bson"
@@ -13,6 +14,14 @@ type User struct {
 	Token        string
 }
 
-func (u User) Save() {
-
+func Login(w http.ResponseWriter, r *http.Request) (*User, error) {
 }
+
+func Signup(r *http.Request) (*User, error) {
+}
+
+func LoggedInUser(r *http.Request) (*User, error) {
+}
+
+func (u User) Logout() error {}
+
