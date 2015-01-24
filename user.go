@@ -23,6 +23,12 @@ type User struct {
 	Token        string        `bson:"token"`
 }
 
+// Drafts returns all drafts the user has been associated with (whether currently active or not)
+func (u User) Drafts() (d []*Draft, err error) {
+	err = DB.C("Drafts").Find(bson.M{"players": bson.M{"$elemMatch": []bson.ObjectId{u.Id}}}).All(&d)
+	return
+}
+
 func (user User) Save() error { return DB.C("Users").UpdateId(user.Id, user) }
 
 type LoginReq struct {
