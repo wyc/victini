@@ -25,7 +25,13 @@ type User struct {
 
 // Drafts returns all drafts the user has been associated with (whether currently active or not)
 func (u User) Drafts() (d []*Draft, err error) {
-	err = DB.C("Drafts").Find(bson.M{"players": bson.M{"$elemMatch": []bson.ObjectId{u.Id}}}).All(&d)
+	err = DB.C("Drafts").Find(bson.M{
+		"players": bson.M{
+			"$elemMatch": bson.M{
+				"user_id": []bson.ObjectId{u.Id},
+			},
+		},
+	}).All(&d)
 	return
 }
 
@@ -38,7 +44,7 @@ func (u User) ActiveDraft() (active *Draft, err error) {
 		return
 	}
 	for _, draft := range drafts {
-		if draft.Finished() {
+		if !draft.Finished() {
 			return draft, nil
 		}
 	}

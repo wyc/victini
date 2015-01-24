@@ -50,23 +50,75 @@ type Draft struct {
 	Name      string        `bson:"name"`
 	CardPacks []CardPack    `bson:"card_packs"`
 	Players   []Player      `bson:"players"`
+	Emails    []string      `bson:"emails"`
 }
 
 // For now, all drafts are KTK drafts
-
-func NewDraft(numPlayers int) (*Draft, error) {
+func (draft *Draft) MakePacks() error {
+	numPlayers := len(draft.Players)
 	const packsPerPlayer = 3
 	set, err := godeckbrew.GetSet("KTK")
 	if err != nil {
-		return &Draft{}, err
+		return err
 	}
 	boosters := make([]CardPack, numPlayers*packsPerPlayer)
 	for i, _ := range boosters {
 		boosters[i] = CardPack(set.NewBoosterPack())
 	}
-	draft := Draft{}
 	draft.CardPacks = []CardPack(boosters)
-	return &draft, nil
+	return draft.Save()
+}
+
+func NewDraft(name string, emails []string) *Draft {
+	return &Draft{
+		Id:        bson.NewObjectId(),
+		CreatedOn: time.Now(),
+		Name:      name,
+		CardPacks: make([]CardPack, 0),
+		Players:   make([]Player, 0),
+		Emails:    emails,
+	}
+}
+
+type StartDraftReq struct {
+	Name   string
+	Emails []string
+}
+
+func serveStartDraft(w http.ResponseWriter, r *http.Request) error {
+	log.Println("Start draft request from", r.RemoteAddr, ":", r.URL)
+	user, err := LoggedInUser(r)
+	if err != nil {
+		log.Println("User not logged in")
+		http.Error(w, "Not logged in", http.StatusUnauthorized)
+		return nil
+	}
+
+	draft, err := user.ActiveDraft()
+	if draft != nil {
+		log.Println(user.Email, "already has an active draft")
+		http.Error(w, "You already have an active draft!", http.StatusBadRequest)
+		return nil
+	} else if err != nil {
+		return err
+	}
+
+	req := new(StartDraftReq)
+	err = json.NewDecoder(r.Body).Decode(req)
+	if err != nil {
+		return err
+	}
+
+	req.Emails = append(req.Emails, user.Email)
+
+	draft = NewDraft(req.Name, req.Emails)
+	err = draft.Insert()
+	if err != nil {
+		return err
+	}
+
+	serveJSON(w, nil)
+	return nil
 }
 
 // Finished is true iff all players have chosen all their cards
@@ -94,7 +146,8 @@ func (draft Draft) PlayerAfter(player Player) Player {
 	return player
 }
 
-func (draft Draft) Save() error { return DB.C("Drafts").UpdateId(draft.Id, draft) }
+func (draft Draft) Save() error   { return DB.C("Drafts").UpdateId(draft.Id, draft) }
+func (draft Draft) Insert() error { return DB.C("Drafts").Insert(draft) }
 
 func (draft Draft) Deal() error {
 	if len(draft.CardPacks) < len(draft.Players) {
