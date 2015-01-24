@@ -32,6 +32,9 @@ func main() {
 	router.HandleFunc("/login", Login)
 	router.HandleFunc("/logout", Logout)
 	router.HandleFunc("/signup", Signup)
+	router.Handle("/deck.json", DraftHandler(serveDeck))
+	router.Handle("/gallery.json", DraftHandler(serveGallery))
+	router.Handle("/card_pack_count.json", DraftHandler(serveCardPackCount))
 	if err := http.ListenAndServe(":8000", router); err != nil {
 		log.Fatalf("listening, %v", err)
 	}
