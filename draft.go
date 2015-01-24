@@ -23,14 +23,27 @@ type Player struct {
 
 // Gallery returns the current collection (multiset) of cards that the player
 // can currently choose from
-func (player Player) Gallery() []godeckbrew.Card {
+func (player Player) Gallery() CardPack {
 	if len(player.CardPacks) == 0 {
-		return make([]godeckbrew.Card, 0)
+		return CardPack(make([]*godeckbrew.Card, 0))
 	}
-	return player.CardPacks[0].Cards
+	return player.CardPacks[0]
 }
 
-type CardPack godeckbrew.Set
+type CardPack []*godeckbrew.Card
+
+
+func (p CardPack) Value() (godeckbrew.Cents, error){
+    var value godeckbrew.Cents = 0
+    for _, card := range []*godeckbrew.Card(p) {
+        p, err := card.Price()
+        if err != nil {
+            return -1, fmt.Errorf("Error retriving price for card %s: %s", card.Name, err)
+        }
+        value += p
+    }
+    return value, nil
+}
 
 type Draft struct {
 	Id        bson.ObjectId `bson:"_id"`
@@ -150,17 +163,17 @@ func servePick(w http.ResponseWriter, r *http.Request, draft Draft, pIdx int) er
 	if len(draft.Players[pIdx].CardPacks) == 0 {
 		return fmt.Errorf("Invalid card pick")
 	}
-	for i, card := range draft.Players[pIdx].CardPacks[0].Cards {
+	for i, card := range draft.Players[pIdx].CardPacks[0] {
 		if req.CardID == card.Multiverseid {
 			// Add Card to Player Deck
-			draft.Players[pIdx].Cards = append(draft.Players[pIdx].Cards, card)
+			draft.Players[pIdx].Cards = append(draft.Players[pIdx].Cards, *card)
 
 			// Delete Card from Card Pack and move to next player
 			cp := draft.Players[pIdx].CardPacks
-			cp[0].Cards = append(cp[0].Cards[i:], cp[0].Cards[i+1:]...)
+			cp[0] = append(cp[0][i:], cp[0][i+1:]...)
 			draft.Players[pIdx].CardPacks = cp[1:]
 
-			if len(cp[0].Cards) > 0 {
+			if len(cp[0]) > 0 {
 				nextPlayer := draft.PlayerAfter(draft.Players[pIdx])
 				nextPlayer.CardPacks = append(nextPlayer.CardPacks, cp[0])
 			}
