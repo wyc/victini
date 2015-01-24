@@ -1,9 +1,12 @@
 package main
 
 import (
+	"encoding/json"
 	"net/http"
+	"strings"
 	"time"
 
+	"code.google.com/p/go-uuid/uuid"
 	"golang.org/x/crypto/bcrypt"
 	"labix.org/v2/mgo/bson"
 )
@@ -18,23 +21,64 @@ type User struct {
 	Token        string        `bson:"token"`
 }
 
+func (user User) Save() error { return DB.C("Users").UpdateId(user.Id, user) }
+
 type LoginReq struct {
 	Email    string
 	Password string
 }
 
 func Login(w http.ResponseWriter, r *http.Request) {
-	return
-}
-
-func Signup(w http.ResponseWriter, r *http.Request) {
-	passwordHash, err := GenerateFromPassword(req.Password, DefaultCost)
+	req := new(LoginReq)
+	err := json.NewDecoder(r.Body).Decode(req)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	email := strings.ToLower(LoginReq.Email)
+	email := strings.ToLower(req.Email)
+	user := new(User)
+	err = DB.C("Users").Find(bson.M{"email": email}).One(user)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(req.Password))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	user.Token = uuid.New()
+	session, _ := CookieStore.Get(r, "session")
+	session.Values["token"] = user.Token
+	session.Save(r, w)
+
+	err = user.Save()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	serveJSON(w, nil)
+}
+
+func Signup(w http.ResponseWriter, r *http.Request) {
+	req := new(LoginReq)
+	err := json.NewDecoder(r.Body).Decode(req)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	passwordHash, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	email := strings.ToLower(req.Email)
 	count, err := DB.C("Users").Find(bson.M{"email": email}).Count()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -50,8 +94,8 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 		LastActive:   time.Now(),
 		Name:         "",
 		Email:        email,
-		PasswordHash: passwordHash,
-		Token:        "",
+		PasswordHash: string(passwordHash),
+		Token:        uuid.New(),
 	})
 	if err != nil {
 		http.Error(w, "Account exists", http.StatusBadRequest)
@@ -72,6 +116,20 @@ func LoggedInUser(r *http.Request) (user *User, err error) {
 	return user, nil
 }
 
-func (u User) Logout() error {
-	return nil
+func Logout(w http.ResponseWriter, r *http.Request) {
+	user, err := LoggedInUser(r)
+	if err != nil {
+		http.Error(w, "Not logged in", http.StatusBadRequest)
+		return
+	}
+
+	user.Token = uuid.New()
+	err = user.Save()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	session, _ := CookieStore.Get(r, "session")
+	delete(session.Values, "token")
+	session.Save(r, w)
 }

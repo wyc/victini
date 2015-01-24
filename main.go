@@ -30,6 +30,8 @@ func main() {
 	router := mux.NewRouter()
 	router.StrictSlash(true)
 	router.HandleFunc("/login", Login)
+	router.HandleFunc("/logout", Logout)
+	router.HandleFunc("/signup", Signup)
 	if err := http.ListenAndServe(":8000", router); err != nil {
 		log.Fatalf("listening, %v", err)
 	}
