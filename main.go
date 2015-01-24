@@ -33,9 +33,9 @@ func main() {
 	router.HandleFunc("/api/login", Login)
 	router.HandleFunc("/api/logout", Logout)
 	router.HandleFunc("/api/signup", Signup)
-	router.Handle("/api/deck.json", DraftHandler(serveDeck))
-	router.Handle("/api/gallery.json", DraftHandler(serveGallery))
-	router.Handle("/api/card_pack_count.json", DraftHandler(serveCardPackCount))
+	router.Handle("/draft/{DraftId}/deck.json", DraftHandler(serveDeck))
+	router.Handle("/draft/{DraftId}/gallery.json", DraftHandler(serveGallery))
+	router.Handle("/draft/{DraftId}/card_pack_count.json", DraftHandler(serveCardPackCount))
 
 	log.Println("Listening on", LISTEN)
 	if err := http.ListenAndServe(LISTEN, router); err != nil {
