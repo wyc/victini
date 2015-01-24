@@ -54,17 +54,19 @@ type Draft struct {
 
 // For now, all drafts are KTK drafts
 
-func NewDraft(numPlayers int) ([][]*godeckbrew.Card, error) {
+func NewDraft(numPlayers int) (*Draft, error) {
 	const packsPerPlayer = 3
 	set, err := godeckbrew.GetSet("KTK")
 	if err != nil {
-		return nil, err
+		return &Draft{}, err
 	}
-	boosters := make([][]*godeckbrew.Card, numPlayers*packsPerPlayer)
+	boosters := make([]CardPack, numPlayers*packsPerPlayer)
 	for i, _ := range boosters {
-		boosters[i] = set.NewBoosterPack()
+		boosters[i] = CardPack(set.NewBoosterPack())
 	}
-	return boosters, nil
+	draft := Draft{}
+	draft.CardPacks = []CardPack(boosters)
+	return &draft, nil
 }
 
 func (draft Draft) PlayerAfter(player Player) Player {
