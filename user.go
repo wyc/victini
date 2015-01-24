@@ -17,13 +17,17 @@ type User struct {
 }
 
 func Login(w http.ResponseWriter, r *http.Request) (*User, error) {
+	return nil, nil
 }
 
 func Signup(r *http.Request) (*User, error) {
+	return nil, nil
 }
 
 func LoggedInUser(r *http.Request) (*User, error) {
+	return nil, nil
 }
 
-func (u User) Logout() error {}
-
+func (u User) Logout() error {
+	return nil
+}

@@ -3,14 +3,14 @@ package main
 import (
 	"time"
 
-	"gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2/bson"
 
 	"github.com/ChimeraCoder/godeckbrew"
 )
 
 type Player struct {
 	Id     bson.ObjectId
-	UserId bson.UserId // A User has many Players
+	UserId bson.ObjectId
 	Cards  []godeckbrew.Card
 }
 
