@@ -100,6 +100,7 @@ func (draft Draft) Deal() error {
 type DraftHandler func(w http.ResponseWriter, r *http.Request, draft Draft, playerIdx int) error
 
 func (dh DraftHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	log.Println("Request from", r.RemoteAddr, ":", r.URL)
 	user, err := LoggedInUser(r)
 	if err != nil {
 		log.Println("User not logged in:", r.RemoteAddr)

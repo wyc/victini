@@ -6,6 +6,8 @@ import (
 	"strings"
 	"time"
 
+	"log"
+
 	"code.google.com/p/go-uuid/uuid"
 	"golang.org/x/crypto/bcrypt"
 	"labix.org/v2/mgo/bson"
@@ -29,23 +31,28 @@ type LoginReq struct {
 }
 
 func Login(w http.ResponseWriter, r *http.Request) {
+	log.Println("Login request from", r.RemoteAddr)
 	req := new(LoginReq)
 	err := json.NewDecoder(r.Body).Decode(req)
 	if err != nil {
+		log.Println(err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	email := strings.ToLower(req.Email)
+	log.Println("Logging in as", email)
 	user := new(User)
 	err = DB.C("Users").Find(bson.M{"email": email}).One(user)
 	if err != nil {
+		log.Println(err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(req.Password))
 	if err != nil {
+		log.Println(err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -57,34 +64,42 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	err = user.Save()
 	if err != nil {
+		log.Println(err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
+	log.Println("Logged in", email)
 	serveJSON(w, nil)
 }
 
 func Signup(w http.ResponseWriter, r *http.Request) {
+	log.Println("Signup request from", r.RemoteAddr)
 	req := new(LoginReq)
 	err := json.NewDecoder(r.Body).Decode(req)
 	if err != nil {
+		log.Println(err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	passwordHash, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 	if err != nil {
+		log.Println(err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	email := strings.ToLower(req.Email)
+	log.Println("Signing up", email)
 	count, err := DB.C("Users").Find(bson.M{"email": email}).Count()
 	if err != nil {
+		log.Println(err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	} else if count > 0 {
-		http.Error(w, "Account exists", http.StatusBadRequest)
+		log.Println("Account already exists:", email)
+		http.Error(w, "Account already exists", http.StatusBadRequest)
 		return
 	}
 
@@ -98,10 +113,12 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 		Token:        uuid.New(),
 	})
 	if err != nil {
-		http.Error(w, "Account exists", http.StatusBadRequest)
+		log.Println(err)
+		http.Error(w, "Database error", http.StatusBadRequest)
 		return
 	}
 
+	log.Println("Signed up", email)
 	serveJSON(w, nil)
 }
 
@@ -117,6 +134,7 @@ func LoggedInUser(r *http.Request) (user *User, err error) {
 }
 
 func Logout(w http.ResponseWriter, r *http.Request) {
+	log.Println("Logout request from", r.RemoteAddr)
 	user, err := LoggedInUser(r)
 	if err != nil {
 		http.Error(w, "Not logged in", http.StatusBadRequest)
@@ -126,10 +144,12 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 	user.Token = uuid.New()
 	err = user.Save()
 	if err != nil {
+		log.Println(err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	session, _ := CookieStore.Get(r, "session")
 	delete(session.Values, "token")
 	session.Save(r, w)
+	log.Println("Logged out", user.Email)
 }

@@ -12,7 +12,7 @@ import (
 
 const (
 	DB_URL  = "localhost"
-	DB_NAME = "db"
+	DB_NAME = "draft"
 	LISTEN  = ":8000"
 )
 
@@ -33,9 +33,9 @@ func main() {
 	router.HandleFunc("/api/login", Login)
 	router.HandleFunc("/api/logout", Logout)
 	router.HandleFunc("/api/signup", Signup)
-	router.Handle("/draft/{DraftId}/deck.json", DraftHandler(serveDeck))
-	router.Handle("/draft/{DraftId}/gallery.json", DraftHandler(serveGallery))
-	router.Handle("/draft/{DraftId}/card_pack_count.json", DraftHandler(serveCardPackCount))
+	router.Handle("/draft/{DraftIdHex}/deck.json", DraftHandler(serveDeck))
+	router.Handle("/draft/{DraftIdHex}/gallery.json", DraftHandler(serveGallery))
+	router.Handle("/draft/{DraftIdHex}/card_pack_count.json", DraftHandler(serveCardPackCount))
 
 	log.Println("Listening on", LISTEN)
 	if err := http.ListenAndServe(LISTEN, router); err != nil {
