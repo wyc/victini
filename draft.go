@@ -1,39 +1,36 @@
 package main
 
 import (
+	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"time"
 
-	"gopkg.in/mgo.v2/bson"
+	"labix.org/v2/mgo/bson"
 
 	"github.com/ChimeraCoder/godeckbrew"
 	"github.com/gorilla/mux"
 )
 
-type Card godeckbrew.Card
-
 type Player struct {
-	Id        bson.ObjectId `bson:"_id"`
-	UserId    bson.ObjectId `bson:"user_id"`
-	Cards     []Card        `bson:"cards"`
-	CardPacks []CardPack    `bson:"card_packs"`
-	Position  int           `bson:"position"`
+	Id        bson.ObjectId     `bson:"_id"`
+	UserId    bson.ObjectId     `bson:"user_id"`
+	Cards     []godeckbrew.Card `bson:"cards"`
+	CardPacks []CardPack        `bson:"card_packs"`
+	Position  int               `bson:"position"`
 }
 
 // Gallery returns the current collection (multiset) of cards that the player
 // can currently choose from
-func (player Player) Gallery() []Card {
-	if len(draft.Players[pIdx].CardPacks) == 0 {
-		return make([]Card, 0)
+func (player Player) Gallery() []godeckbrew.Card {
+	if len(player.CardPacks) == 0 {
+		return make([]godeckbrew.Card, 0)
 	}
-	return draft.Players[pIdx].CardPacks[0].Cards
+	return player.CardPacks[0].Cards
 }
 
-type CardPack struct {
-	Name  string
-	Cards []Card
-}
+type CardPack godeckbrew.Set
 
 type Draft struct {
 	Id        bson.ObjectId `bson:"_id"`
@@ -45,6 +42,13 @@ type Draft struct {
 
 func (draft Draft) PlayerAfter(player Player) Player {
 	nextPosition := (player.Position + 1) % len(draft.Players)
+	for _, np := range draft.Players {
+		if np.Position == nextPosition {
+			return np
+		}
+	}
+	log.Println("No next player found, returning current player")
+	return player
 }
 
 func (draft Draft) Save() error { return DB.C("Drafts").UpdateId(draft.Id, draft) }
@@ -112,15 +116,22 @@ func (dh DraftHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func serveDeck(w http.ResponseWriter, r *http.Request, draft Draft, pIdx int) error {
-	return serveJSON(w, draft.Players[pIdx].Cards)
+	serveJSON(w, draft.Players[pIdx].Cards)
+	return nil
 }
 
 func serveGallery(w http.ResponseWriter, r *http.Request, draft Draft, pIdx int) error {
-	return serveJSON(w, draft.Players[pIdx].Gallery())
+	serveJSON(w, draft.Players[pIdx].Gallery())
+	return nil
 }
 
 type PickReq struct {
-	CardID string `json:"card_id"`
+	CardID int
+}
+
+func serveCardPackCount(w http.ResponseWriter, r *http.Request, draft Draft, pIdx int) error {
+	serveJSON(w, len(draft.Players[pIdx].CardPacks))
+	return nil
 }
 
 // Player uses servePick to pick a card from the current Gallery (available
@@ -129,7 +140,7 @@ type PickReq struct {
 // after the pick.
 func servePick(w http.ResponseWriter, r *http.Request, draft Draft, pIdx int) error {
 	req := new(PickReq)
-	err = json.NewDecoder(r.Body).Decode(&req)
+	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
 		log.Println("Unmarshal PickReq:", err)
 		// @TODO http.StatusBadRequest
@@ -139,14 +150,14 @@ func servePick(w http.ResponseWriter, r *http.Request, draft Draft, pIdx int) er
 	if len(draft.Players[pIdx].CardPacks) == 0 {
 		return fmt.Errorf("Invalid card pick")
 	}
-	for i, card := range draft.Players[pIdx].CardPacks[0] {
-		if req.CardID == card.ID {
+	for i, card := range draft.Players[pIdx].CardPacks[0].Cards {
+		if req.CardID == card.Multiverseid {
 			// Add Card to Player Deck
 			draft.Players[pIdx].Cards = append(draft.Players[pIdx].Cards, card)
 
 			// Delete Card from Card Pack and move to next player
 			cp := draft.Players[pIdx].CardPacks
-			cp[0] = append(cp[0].Cards[i:], cp[0].Cards[i+1:]...)
+			cp[0].Cards = append(cp[0].Cards[i:], cp[0].Cards[i+1:]...)
 			draft.Players[pIdx].CardPacks = cp[1:]
 
 			if len(cp[0].Cards) > 0 {

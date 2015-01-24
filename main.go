@@ -2,7 +2,11 @@ package main
 
 import (
 	"log"
+	"net/http"
+	"os"
 
+	"github.com/gorilla/mux"
+	"github.com/gorilla/sessions"
 	"labix.org/v2/mgo"
 )
 
@@ -22,4 +26,11 @@ func main() {
 	}
 
 	DB = session.DB(DB_NAME)
+
+	router := mux.NewRouter()
+	router.StrictSlash(true)
+	router.HandleFunc("/login", Login)
+	if err := http.ListenAndServe(":8000", router); err != nil {
+		log.Fatalf("listening, %v", err)
+	}
 }

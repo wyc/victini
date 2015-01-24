@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-func serveJSON(w http.ResponseWriter, v interface{}) error {
+func serveJSON(w http.ResponseWriter, v interface{}) {
 	js, err := json.MarshalIndent(v, "", "  ")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
