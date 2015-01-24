@@ -32,17 +32,16 @@ func (player Player) Gallery() CardPack {
 
 type CardPack []*godeckbrew.Card
 
-
-func (p CardPack) Value() (godeckbrew.Cents, error){
-    var value godeckbrew.Cents = 0
-    for _, card := range []*godeckbrew.Card(p) {
-        p, err := card.Price()
-        if err != nil {
-            return -1, fmt.Errorf("Error retriving price for card %s: %s", card.Name, err)
-        }
-        value += p
-    }
-    return value, nil
+func (p CardPack) Value() (godeckbrew.Cents, error) {
+	var value godeckbrew.Cents = 0
+	for _, card := range []*godeckbrew.Card(p) {
+		p, err := card.Price()
+		if err != nil {
+			return -1, fmt.Errorf("Error retriving price for card %s: %s", card.Name, err)
+		}
+		value += p
+	}
+	return value, nil
 }
 
 type Draft struct {
@@ -51,6 +50,21 @@ type Draft struct {
 	Name      string        `bson:"name"`
 	CardPacks []CardPack    `bson:"card_packs"`
 	Players   []Player      `bson:"players"`
+}
+
+// For now, all drafts are KTK drafts
+
+func NewDraft(numPlayers int) ([][]*godeckbrew.Card, error) {
+	const packsPerPlayer = 3
+	set, err := godeckbrew.GetSet("KTK")
+	if err != nil {
+		return nil, err
+	}
+	boosters := make([][]*godeckbrew.Card, numPlayers*packsPerPlayer)
+	for i, _ := range boosters {
+		boosters[i] = set.NewBoosterPack()
+	}
+	return boosters, nil
 }
 
 func (draft Draft) PlayerAfter(player Player) Player {
