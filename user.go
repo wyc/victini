@@ -29,6 +29,22 @@ func (u User) Drafts() (d []*Draft, err error) {
 	return
 }
 
+// ActiveDraft returns the one active draft for the user
+// We assume that there is at most one active draft for each user at all times
+
+func (u User) ActiveDraft() (active *Draft, err error) {
+	drafts, err := u.Drafts()
+	if err != nil {
+		return
+	}
+	for _, draft := range drafts {
+		if draft.Finished() {
+			return draft, nil
+		}
+	}
+	return nil, err
+}
+
 func (user User) Save() error { return DB.C("Users").UpdateId(user.Id, user) }
 
 type LoginReq struct {
