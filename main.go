@@ -11,6 +11,8 @@ const (
 	DB_NAME = "db"
 )
 
+var CookieStore = sessions.NewCookieStore([]byte(os.Getenv("COOKIE_SECRET")))
+
 var DB *mgo.Database
 
 func main() {
