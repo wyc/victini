@@ -24,4 +24,5 @@ type Draft struct {
 	CreatedOn time.Time
 	Name      string
 	CardPacks []CardPack
+	Players   []Player
 }
