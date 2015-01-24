@@ -13,6 +13,7 @@ import (
 const (
 	DB_URL  = "localhost"
 	DB_NAME = "db"
+	LISTEN  = ":8000"
 )
 
 var CookieStore = sessions.NewCookieStore([]byte(os.Getenv("COOKIE_SECRET")))
@@ -29,13 +30,15 @@ func main() {
 
 	router := mux.NewRouter()
 	router.StrictSlash(true)
-	router.HandleFunc("/login", Login)
-	router.HandleFunc("/logout", Logout)
-	router.HandleFunc("/signup", Signup)
-	router.Handle("/deck.json", DraftHandler(serveDeck))
-	router.Handle("/gallery.json", DraftHandler(serveGallery))
-	router.Handle("/card_pack_count.json", DraftHandler(serveCardPackCount))
-	if err := http.ListenAndServe(":8000", router); err != nil {
+	router.HandleFunc("/api/login", Login)
+	router.HandleFunc("/api/logout", Logout)
+	router.HandleFunc("/api/signup", Signup)
+	router.Handle("/api/deck.json", DraftHandler(serveDeck))
+	router.Handle("/api/gallery.json", DraftHandler(serveGallery))
+	router.Handle("/api/card_pack_count.json", DraftHandler(serveCardPackCount))
+
+	log.Println("Listening on", LISTEN)
+	if err := http.ListenAndServe(LISTEN, router); err != nil {
 		log.Fatalf("listening, %v", err)
 	}
 }
