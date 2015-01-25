@@ -30,6 +30,7 @@ func main() {
 
 	router := mux.NewRouter()
 	router.StrictSlash(true)
+	router.HandleFunc("/login", serveLoginPage)
 	router.HandleFunc("/api/login", Login)
 	router.HandleFunc("/api/logout", Logout)
 	router.HandleFunc("/api/signup", Signup)
