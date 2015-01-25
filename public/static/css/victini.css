@@ -16,6 +16,11 @@ div.spoiledcard
     height: 400px;
     border: 1px solid #9325BC;
     padding: 10px;
+    -khtml-user-select: none;
+    -o-user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 div.spoiledcard.selected
