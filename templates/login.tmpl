@@ -1,13 +1,23 @@
 {{define "content"}}
-<form>
-  <h1>Login to Victini</h1>
-  <fieldset>
-    <label>Email</label>
-    <input id="name" type="text" />
-    <label>Password</label>
-    <input type="Password" />
+<div class="col-md-4"></div>
+<form class="form col-md-4">
+  <fieldset style="background-color: #eeeeff; padding: 20px; margin-top: 50px; border: 1px solid #ddddee;" class="img-rounded">
+    <h2>Welcome to Victini</h2>
     <span id="output"></span>
+    <div class="form-group">
+      <label>Email</label>
+      <input placeholder="user@example.com" class="form-control" id="name" type="text" />
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input placeholder="*****************" class="form-control" type="Password" />
+    </div>
+    <div class="form-group">
+      <button style="margin-left:10px;" class="btn btn-primary pull-right">Log In</button>
+      <button class="btn btn-info pull-right">Sign Up</button>
+    </div>
   </fieldset>
 </form>
+<div class="col-md-4"></div>
 <script src="/static/gojs/test.js"></script>
 {{end}}
