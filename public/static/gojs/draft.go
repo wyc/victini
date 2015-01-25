@@ -29,14 +29,6 @@ func main() {
 			} else {
 				img.Show()
 			}
-			/**
-						//show welcome message:
-						if len(name) > 0 {
-							jQuery(OUTPUT).SetText("Log in as " + name + " !")
-						} else {
-							jQuery(OUTPUT).Empty()
-						}
-			            **/
 		})
 	}
 }
