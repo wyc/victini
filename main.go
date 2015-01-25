@@ -38,8 +38,11 @@ func main() {
 	router.Handle("/draft/{DraftIdHex}/gallery.json", DraftHandler(serveGallery))
 	router.Handle("/draft/{DraftIdHex}/card_pack_count.json", DraftHandler(serveCardPackCount))
 
+    http.Handle("/static/", http.FileServer(http.Dir("public")))
+    http.Handle("/", router)
+
 	log.Println("Listening on", LISTEN)
-	if err := http.ListenAndServe(LISTEN, router); err != nil {
+	if err := http.ListenAndServe(LISTEN, nil); err != nil {
 		log.Fatalf("listening, %v", err)
 	}
 }

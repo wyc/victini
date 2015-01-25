@@ -1,9 +1,13 @@
 {{define "base"}}
 <!doctype html />
 <html>
-  <head></head>
-  <body>
-    {{template "content" .}}
-  </body>
+    <head>
+        <meta charset="utf-8">
+        <title>Welcome to GopherJS with jQuery</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+    </head>
+    <body>
+        {{template "content" .}}
+    </body>
 </html>
 {{end}}
