@@ -161,8 +161,15 @@ func serveJoinDraft(w http.ResponseWriter, r *http.Request) error {
 	return nil
 }
 
-func (draft Draft) AddPlayer(user User) error {
-	// @TODO actually add player
+func (draft *Draft) AddPlayer(user User) error {
+	if len(draft.CardPacks) < 3 {
+		return fmt.Errorf("Not enough booster packs available for drafting: %d packs", len(draft.CardPacks))
+	}
+
+	p := Player{UserId: user.Id, CardPacks: draft.CardPacks[0:3], Position: -1}
+	draft.CardPacks = draft.CardPacks[3:]
+	draft.Players = append(draft.Players, p)
+
 	return draft.Save()
 }
 
