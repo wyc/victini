@@ -105,7 +105,7 @@ func serveCreateDraft(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
-	req := new(StartDraftReq)
+	req := new(CreateDraftReq)
 	err = json.NewDecoder(r.Body).Decode(req)
 	if err != nil {
 		return err
