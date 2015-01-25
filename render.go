@@ -21,3 +21,8 @@ func serveLoginPage(w http.ResponseWriter, r *http.Request) {
 	log.Println("Login page request from", r.RemoteAddr)
 	renderTemplate(w, "login", &Page{})
 }
+
+func serveDraftPage(w http.ResponseWriter, r *http.Request) {
+	log.Println("Draft page request from", r.RemoteAddr)
+	renderTemplate(w, "draft", &Page{})
+}
