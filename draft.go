@@ -225,7 +225,7 @@ func DraftFromURL(r *http.Request) (*Draft, error) {
 	draftId := bson.ObjectIdHex(draftIdHex)
 	var draft Draft
 	if err := DB.C("Drafts").FindId(draftId).One(&draft); err != nil {
-		log.Println(`Draft not found: "%s"`, draftId.Hex())
+		log.Printf(`Draft not found: "%s"`, draftId.Hex())
 		return nil, fmt.Errorf("Draft not found")
 	}
 
@@ -259,7 +259,7 @@ func (dh DraftHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	if playerIdx == -1 {
-		log.Println(`Player "%s" not part of draft "%s"`, user.Name, draft.Id.Hex())
+		log.Printf(`Player "%s" not part of draft "%s"`, user.Name, draft.Id.Hex())
 		http.Error(w, "You are not part of this draft", http.StatusUnauthorized)
 		return
 	}
