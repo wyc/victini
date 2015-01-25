@@ -28,7 +28,7 @@ func (u User) Drafts() (d []*Draft, err error) {
 	err = DB.C("Drafts").Find(bson.M{
 		"players": bson.M{
 			"$elemMatch": bson.M{
-				"user_id": []bson.ObjectId{u.Id},
+				"user_id": u.Id,
 			},
 		},
 	}).All(&d)
