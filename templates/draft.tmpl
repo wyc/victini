@@ -41,6 +41,7 @@
         <!-- multiverse ID from http://localhost:8000/draft/1/fake_gallery.json -->
         {{range $idx, $card := .Data}}
           <div class="spoiledcard" id="a{{$idx}}">
+              <button name="Pick" class="btn" style="display: none;">Pick</button>
             <img class="cardimage" src="http://mtgimage.com/multiverseid/{{.Multiverseid}}.jpg">
           </div>
         {{end}}

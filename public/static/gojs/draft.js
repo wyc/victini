@@ -3063,14 +3063,17 @@ $packages["main"] = (function() {
 			cardId = ((_i < 0 || _i >= _ref.$length) ? $throwRuntimeError("index out of range") : _ref.$array[_ref.$offset + _i]);
 			selector[0] = "div#" + cardId;
 			jQuery(new sliceType$1([new $String(selector[0])])).On(new sliceType$1([new $String("click"), new funcType((function(selector) { return function(e) {
-				var img;
+				var btn, img;
 				console.log(e.Object.target);
 				img = $clone(jQuery(new sliceType$1([new $String(selector[0])])).Children(new $String("img")), jquery.JQuery);
+				btn = $clone(jQuery(new sliceType$1([new $String(selector[0])])).Children(new $String("button")), jquery.JQuery);
 				console.log(img);
 				if (img.Is(new sliceType$1([new $String(":visible")]))) {
 					img.Hide();
+					btn.Show();
 				} else {
 					img.Show();
+					btn.Hide();
 				}
 			}; })(selector))]));
 			_i++;
