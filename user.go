@@ -44,7 +44,7 @@ func (u User) ActiveDraft() (active *Draft, err error) {
 		return
 	}
 	for _, draft := range drafts {
-		if !draft.Finished() {
+		if !draft.Finished {
 			return draft, nil
 		}
 	}

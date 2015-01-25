@@ -51,6 +51,8 @@ type Draft struct {
 	CardPacks []CardPack    `bson:"card_packs"`
 	Players   []Player      `bson:"players"`
 	Emails    []string      `bson:"emails"`
+	Started   bool          `bson:"started"`
+	Finished  bool          `bson:"finished"`
 }
 
 // For now, all drafts are KTK drafts
@@ -121,8 +123,51 @@ func serveStartDraft(w http.ResponseWriter, r *http.Request) error {
 	return nil
 }
 
-// Finished is true iff all players have chosen all their cards
-func (d Draft) Finished() bool {
+func serveJoinDraft(w http.ResponseWriter, r *http.Request) error {
+	log.Println("Start draft request from", r.RemoteAddr, ":", r.URL)
+	user, err := LoggedInUser(r)
+	if err != nil {
+		log.Println("User not logged in")
+		http.Error(w, "Not logged in", http.StatusUnauthorized)
+		return nil
+	}
+
+	draft, err := user.ActiveDraft()
+	if draft != nil {
+		log.Println(user.Email, "already has an active draft")
+		http.Error(w, "You already have an active draft!", http.StatusBadRequest)
+		return nil
+	} else if err != nil {
+		return err
+	}
+
+	draft, err = DraftFromURL(r)
+	if err != nil {
+		return err
+	}
+
+	if draft.Finished {
+		return fmt.Errorf("Draft has already finished")
+	} else if draft.Started {
+		return fmt.Errorf("Draft has already started")
+	}
+
+	err = draft.AddPlayer(*user)
+	if err != nil {
+		return err
+	}
+
+	serveJSON(w, nil)
+	return nil
+}
+
+func (draft Draft) AddPlayer(user User) error {
+	// @TODO actually add player
+	return draft.Save()
+}
+
+// true iff all players have chosen all their cards
+func (d Draft) AllCardsPicked() bool {
 	if len(d.CardPacks) > 0 {
 		return false
 	}
@@ -162,6 +207,24 @@ func (draft Draft) Deal() error {
 	return draft.Save()
 }
 
+func DraftFromURL(r *http.Request) (*Draft, error) {
+	vars := mux.Vars(r)
+	draftIdHex := vars["DraftIdHex"]
+	if !bson.IsObjectIdHex(draftIdHex) {
+		log.Printf(`Invalid Draft ID: "%s"`, draftIdHex)
+		return nil, fmt.Errorf("Invalid Draft ID")
+	}
+
+	draftId := bson.ObjectIdHex(draftIdHex)
+	var draft Draft
+	if err := DB.C("Drafts").FindId(draftId).One(&draft); err != nil {
+		log.Println(`Draft not found: "%s"`, draftId.Hex())
+		return nil, fmt.Errorf("Draft not found")
+	}
+
+	return &draft, nil
+}
+
 // DraftHandler is a wrapper that injects a special Draft handler func with
 // a draft and the player index making the action
 type DraftHandler func(w http.ResponseWriter, r *http.Request, draft Draft, playerIdx int) error
@@ -175,19 +238,9 @@ func (dh DraftHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	vars := mux.Vars(r)
-	draftIdHex := vars["DraftIdHex"]
-	if !bson.IsObjectIdHex(draftIdHex) {
-		log.Printf(`Invalid Draft ID: "%s"`, draftIdHex)
-		http.Error(w, "Invalid Draft ID", http.StatusBadRequest)
-		return
-	}
-
-	draftId := bson.ObjectIdHex(draftIdHex)
-	var draft Draft
-	if err := DB.C("Drafts").FindId(draftId).One(&draft); err != nil {
-		log.Println(`Draft not found: "%s"`, draftId.Hex())
-		http.Error(w, "Draft not found", http.StatusBadRequest)
+	draft, err := DraftFromURL(r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -204,7 +257,7 @@ func (dh DraftHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = dh(w, r, draft, playerIdx)
+	err = dh(w, r, *draft, playerIdx)
 	if err != nil {
 		log.Println("DraftHandler call:", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -262,6 +315,10 @@ func servePick(w http.ResponseWriter, r *http.Request, draft Draft, pIdx int) er
 				nextPlayer.CardPacks = append(nextPlayer.CardPacks, cp[0])
 			}
 
+			if draft.AllCardsPicked() {
+				draft.Finished = true
+				// @TODO END DRAFT
+			}
 			return draft.Save()
 		}
 	}
