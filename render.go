@@ -4,9 +4,13 @@ import (
 	"log"
 	"net/http"
 	"text/template"
+
+	"github.com/ChimeraCoder/godeckbrew"
 )
 
-type Page struct{}
+type Page struct {
+	Data interface{}
+}
 
 func renderTemplate(w http.ResponseWriter, tmpl string, p *Page) {
 	t, err := template.ParseFiles("templates/"+tmpl+".tmpl", "templates/base.tmpl")
@@ -24,5 +28,20 @@ func serveLoginPage(w http.ResponseWriter, r *http.Request) {
 
 func serveDraftPage(w http.ResponseWriter, r *http.Request) {
 	log.Println("Draft page request from", r.RemoteAddr)
-	renderTemplate(w, "draft", &Page{})
+	set, err := godeckbrew.GetSet("KTK")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	renderTemplate(w, "draft", &Page{Data: set.NewBoosterPack()})
+}
+
+func serveFakeGallery(w http.ResponseWriter, r *http.Request) {
+	set, err := godeckbrew.GetSet("KTK")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	serveJSON(w, set.NewBoosterPack())
 }

@@ -39,11 +39,11 @@
       <div class="img-rounded" style="margin-left: 10px; margin-bottom: 20px; padding: 10px; background-color: white; border: 2px solid #eee;">
         <h2 class="text-center">Round 1 / Booster Pack 1 / 1st Time Around</h2>
         <!-- multiverse ID from http://localhost:8000/draft/1/fake_gallery.json -->
-        <div class="spoiledcard" id="a1"> <img src="http://mtgimage.com/multiverseid/174859.jpg"></div>
-        <div class="spoiledcard" id="a2"> <img src="http://mtgimage.com/multiverseid/174859.jpg"></div>
-        <div class="spoiledcard" id="a3"> <img src="http://mtgimage.com/multiverseid/174859.jpg"></div>
-        <div class="spoiledcard" id="a4"> <img src="http://mtgimage.com/multiverseid/174859.jpg"></div>
-        <div class="spoiledcard" id="a5"> <img src="http://mtgimage.com/multiverseid/174859.jpg"></div>
+        {{range $idx, $card := .Data}}
+          <div class="spoiledcard" id="a{{$idx}}">
+            <img class="cardimage" src="http://mtgimage.com/multiverseid/{{.Multiverseid}}.jpg">
+          </div>
+        {{end}}
         <div class="clearfix"></div>
       </div>
     </div></div>
