@@ -1,6 +1,17 @@
 
 
-div.selected {
-    background: #ae4fcd;
+div.spoiledcard
+{
+    width: 280px;
+    height: 400px;
+    border: 1px solid #9325BC;
+    padding: 10px;
+}
+
+div.spoiledcard.selected
+{
+    -moz-box-shadow: 0 0 10px #ccc;
+    -webkit-box-shadow: 0 0 10px #ccc;
+    box-shadow: 0 0 10px #ccc;
 }
 

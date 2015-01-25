@@ -21,10 +21,10 @@ func main() {
 		//catch keyup events on input#name element:
 		jQuery(selector).On(jquery.CLICK, func(e jquery.Event) {
 
-			name := jQuery(e.Target).Val()
-			name = jquery.Trim(name)
 			print(e.Target)
-			jQuery(e.Target).Parent().ToggleClass("selected")
+			img := jQuery(selector).Children("img")
+			print(img)
+			img.Hide()
 
 			/**
 						//show welcome message:

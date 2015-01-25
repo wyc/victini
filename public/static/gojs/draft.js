@@ -2182,7 +2182,7 @@ $packages["runtime"] = (function() {
 	return $pkg;
 })();
 $packages["github.com/gopherjs/jquery"] = (function() {
-	var $pkg = {}, js, JQuery, Event, JQueryCoordinates, sliceType, funcType$1, mapType, sliceType$1, funcType$2, funcType$3, sliceType$2, ptrType, ptrType$1, NewJQuery, Trim;
+	var $pkg = {}, js, JQuery, Event, JQueryCoordinates, sliceType, funcType$1, mapType, sliceType$1, funcType$2, funcType$3, sliceType$2, ptrType, ptrType$1, NewJQuery;
 	js = $packages["github.com/gopherjs/gopherjs/js"];
 	JQuery = $pkg.JQuery = $newType(0, $kindStruct, "jquery.JQuery", "JQuery", "github.com/gopherjs/jquery", function(o_, Jquery_, Selector_, Length_, Context_) {
 		this.$val = this;
@@ -2261,9 +2261,6 @@ $packages["github.com/gopherjs/jquery"] = (function() {
 	Event.prototype.StopPropagation = function() { return this.$val.StopPropagation(); };
 	NewJQuery = $pkg.NewJQuery = function(args) {
 		return new JQuery.ptr(new ($global.Function.prototype.bind.apply($global.jQuery, [undefined].concat($externalize(args, sliceType)))), "", "", 0, "");
-	};
-	Trim = $pkg.Trim = function(text) {
-		return $internalize($global.jQuery.trim($externalize(text, $String)), $String);
 	};
 	JQuery.ptr.prototype.Each = function(fn) {
 		var j;
@@ -3062,15 +3059,16 @@ $packages["main"] = (function() {
 		_ref = inputs;
 		_i = 0;
 		while (_i < _ref.$length) {
+			selector = [undefined];
 			cardId = ((_i < 0 || _i >= _ref.$length) ? $throwRuntimeError("index out of range") : _ref.$array[_ref.$offset + _i]);
-			selector = "div#" + cardId;
-			jQuery(new sliceType$1([new $String(selector)])).On(new sliceType$1([new $String("click"), new funcType((function(e) {
-				var name;
-				name = jQuery(new sliceType$1([new $js.container.ptr(e.Object.target)])).Val();
-				name = jquery.Trim(name);
+			selector[0] = "div#" + cardId;
+			jQuery(new sliceType$1([new $String(selector[0])])).On(new sliceType$1([new $String("click"), new funcType((function(selector) { return function(e) {
+				var img;
 				console.log(e.Object.target);
-				jQuery(new sliceType$1([new $js.container.ptr(e.Object.target)])).Parent(new sliceType$1([])).ToggleClass(new sliceType$1([new $String("selected")]));
-			}))]));
+				img = $clone(jQuery(new sliceType$1([new $String(selector[0])])).Children(new $String("img")), jquery.JQuery);
+				console.log(img);
+				img.Hide();
+			}; })(selector))]));
 			_i++;
 		}
 	};
