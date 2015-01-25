@@ -3067,7 +3067,11 @@ $packages["main"] = (function() {
 				console.log(e.Object.target);
 				img = $clone(jQuery(new sliceType$1([new $String(selector[0])])).Children(new $String("img")), jquery.JQuery);
 				console.log(img);
-				img.Hide();
+				if (img.Is(new sliceType$1([new $String(":visible")]))) {
+					img.Hide();
+				} else {
+					img.Show();
+				}
 			}; })(selector))]));
 			_i++;
 		}

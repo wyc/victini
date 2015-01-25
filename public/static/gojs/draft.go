@@ -24,8 +24,11 @@ func main() {
 			print(e.Target)
 			img := jQuery(selector).Children("img")
 			print(img)
-			img.Hide()
-
+			if img.Is(":visible") {
+				img.Hide()
+			} else {
+				img.Show()
+			}
 			/**
 						//show welcome message:
 						if len(name) > 0 {
