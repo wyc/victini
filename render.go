@@ -14,7 +14,7 @@ func renderTemplate(w http.ResponseWriter, tmpl string, p *Page) {
 		log.Println("render:", err)
 		return
 	}
-	t.Execute(w, p)
+	t.ExecuteTemplate(w, "base", p)
 }
 
 func serveLoginPage(w http.ResponseWriter, r *http.Request) {
