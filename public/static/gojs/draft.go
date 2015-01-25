@@ -7,11 +7,6 @@ import "github.com/gopherjs/jquery"
 //convenience:
 var jQuery = jquery.NewJQuery
 
-const (
-	INPUT  = "input#name"
-	OUTPUT = "span#output"
-)
-
 func main() {
 
 	// TODO don't hardcode these
@@ -21,20 +16,24 @@ func main() {
 	print("Your current jQuery version is: " + jQuery().Jquery)
 	print("asdf")
 
-	for _, input := range inputs {
+	for _, cardId := range inputs {
+		selector := "div#" + cardId
 		//catch keyup events on input#name element:
-		jQuery(input).On(jquery.CLICK, func(e jquery.Event) {
+		jQuery(selector).On(jquery.CLICK, func(e jquery.Event) {
 
 			name := jQuery(e.Target).Val()
 			name = jquery.Trim(name)
-			print("name is" + name)
+			print(e.Target)
+			jQuery(e.Target).Parent().ToggleClass("selected")
 
-			//show welcome message:
-			if len(name) > 0 {
-				jQuery(OUTPUT).SetText("Log in as " + name + " !")
-			} else {
-				jQuery(OUTPUT).Empty()
-			}
+			/**
+						//show welcome message:
+						if len(name) > 0 {
+							jQuery(OUTPUT).SetText("Log in as " + name + " !")
+						} else {
+							jQuery(OUTPUT).Empty()
+						}
+			            **/
 		})
 	}
 }
