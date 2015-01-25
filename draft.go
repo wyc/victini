@@ -45,14 +45,15 @@ func (p CardPack) Value() (godeckbrew.Cents, error) {
 }
 
 type Draft struct {
-	Id        bson.ObjectId `bson:"_id"`
-	CreatedOn time.Time     `bson:"created_on"`
-	Name      string        `bson:"name"`
-	CardPacks []CardPack    `bson:"card_packs"`
-	Players   []Player      `bson:"players"`
-	Emails    []string      `bson:"emails"`
-	Started   bool          `bson:"started"`
-	Finished  bool          `bson:"finished"`
+	Id         bson.ObjectId `bson:"_id"`
+	HostUserId bson.ObjectId `bson:"hostUserId"`
+	CreatedOn  time.Time     `bson:"created_on"`
+	Name       string        `bson:"name"`
+	CardPacks  []CardPack    `bson:"card_packs"`
+	Players    []Player      `bson:"players"`
+	Emails     []string      `bson:"emails"`
+	Started    bool          `bson:"started"`
+	Finished   bool          `bson:"finished"`
 }
 
 // For now, all drafts are KTK drafts
@@ -71,15 +72,56 @@ func (draft *Draft) MakePacks() error {
 	return draft.Save()
 }
 
-func NewDraft(name string, emails []string) *Draft {
+func NewDraft(hostUserId bson.ObjectId, name string, emails []string) *Draft {
 	return &Draft{
-		Id:        bson.NewObjectId(),
-		CreatedOn: time.Now(),
-		Name:      name,
-		CardPacks: make([]CardPack, 0),
-		Players:   make([]Player, 0),
-		Emails:    emails,
+		Id:         bson.NewObjectId(),
+		HostUserId: hostUserId,
+		CreatedOn:  time.Now(),
+		Name:       name,
+		CardPacks:  make([]CardPack, 0),
+		Players:    make([]Player, 0),
+		Emails:     emails,
+		Started:    false,
+		Finished:   false,
 	}
+}
+
+func serveStartDraft(w http.ResponseWriter, r *http.Request) error {
+	log.Println("Start draft request from", r.RemoteAddr, ":", r.URL)
+	user, err := LoggedInUser(r)
+	if err != nil {
+		log.Println("User not logged in")
+		http.Error(w, "Not logged in", http.StatusUnauthorized)
+		return nil
+	}
+
+	draft, err := user.ActiveDraft()
+	if draft == nil {
+		log.Println(user.Email, "has no active draft")
+		http.Error(w, "You do not have an active draft!", http.StatusBadRequest)
+		return nil
+	} else if err != nil {
+		return err
+	}
+
+	if draft.Started {
+		return fmt.Errorf("Draft has already started")
+	}
+
+	err = draft.MakePacks()
+	if err != nil {
+		log.Println("MakePacks:", err)
+		return err
+	}
+
+	err = draft.Deal()
+	if err != nil {
+		log.Println("Deal:", err)
+		return err
+	}
+
+	serveJSON(w, nil)
+	return nil
 }
 
 type CreateDraftReq struct {
@@ -113,7 +155,7 @@ func serveCreateDraft(w http.ResponseWriter, r *http.Request) error {
 
 	req.Emails = append(req.Emails, user.Email)
 
-	draft = NewDraft(req.Name, req.Emails)
+	draft = NewDraft(user.Id, req.Name, req.Emails)
 	err = draft.Insert()
 	if err != nil {
 		return err
@@ -146,6 +188,18 @@ func serveJoinDraft(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
+	var i int
+	for i = 0; i < len(draft.Emails); i++ {
+		if draft.Emails[i] == user.Email {
+			break
+		}
+	}
+	if i == len(draft.Emails) {
+		log.Println(user.Email, "was not invited to draft", draft.Id.Hex())
+		http.Error(w, "You are not part of this draft!", http.StatusUnauthorized)
+		return nil
+	}
+
 	if draft.Finished {
 		return fmt.Errorf("Draft has already finished")
 	} else if draft.Started {
@@ -162,23 +216,29 @@ func serveJoinDraft(w http.ResponseWriter, r *http.Request) error {
 }
 
 func (draft *Draft) AddPlayer(user User) error {
-	if len(draft.CardPacks) < 3 {
-		return fmt.Errorf("Not enough booster packs available for drafting: %d packs", len(draft.CardPacks))
+	p := Player{
+		Id:        bson.NewObjectId(),
+		UserId:    user.Id,
+		Cards:     make([]godeckbrew.Card, 0),
+		CardPacks: make([]CardPack, 0),
+		Position:  -1,
 	}
-
-	p := Player{UserId: user.Id, CardPacks: draft.CardPacks[0:3], Position: -1}
-	draft.CardPacks = draft.CardPacks[3:]
 	draft.Players = append(draft.Players, p)
-
 	return draft.Save()
 }
 
-// true iff all players have chosen all their cards
+// true iff there are no other cards in the draft besides those in the
+// players' decks
 func (d Draft) AllCardsPicked() bool {
 	if len(d.CardPacks) > 0 {
 		return false
 	}
 
+	return d.AllPlayerCardsPicked()
+}
+
+// true iff all players have chosen all their cards from the current round
+func (d Draft) AllPlayerCardsPicked() bool {
 	for _, player := range d.Players {
 		if len(player.CardPacks) != 0 {
 			return false
@@ -322,7 +382,13 @@ func servePick(w http.ResponseWriter, r *http.Request, draft Draft, pIdx int) er
 				nextPlayer.CardPacks = append(nextPlayer.CardPacks, cp[0])
 			}
 
-			if draft.AllCardsPicked() {
+			if draft.AllPlayerCardsPicked() {
+				log.Println("No more CardPacks going around...dealing!")
+				err = draft.Deal()
+				if err != nil {
+					log.Println("Deal:", err)
+				}
+			} else if draft.AllCardsPicked() {
 				draft.Finished = true
 				// @TODO END DRAFT
 			}
