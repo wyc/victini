@@ -1,69 +1,98 @@
 {{define "content"}}
-<div style="background-color: #eeeeff; border-bottom: 3px solid #ddd; padding-bottom: 10px;" class="row">
-  <div class="col-md-2"></div>
-  <div class="col-md-8">
-    <h1>Victini: MTG Online Multiplayer Draft</h1>
+<style>
+.spoiledcard {
+  float: left;
+}
+</style>
+
+<nav class="navbar navbar-inverse navbar-fixed-top">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">Victini: MTG Online Multiplayer Draft</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <p class="navbar-text navbar-right">Signed in as user@example.com</p>
+      <!--
+      <form class="navbar-form navbar-right">
+        <div class="form-group">
+          <input type="text" placeholder="Email" class="form-control">
+        </div>
+        <div class="form-group">
+          <input type="password" placeholder="Password" class="form-control">
+        </div>
+        <button type="submit" class="btn btn-success">Sign in</button>
+      </form>
+      -->
+    </div><!--/.navbar-collapse -->
   </div>
-  <div class="col-md-2">
-    <h4>Logged in as <i>user@verylongemail.com</i></h4>
-  </div>
-</div>
+</nav>
+
 <div style="background-color: #f2f2f2; border-bottom: 3px solid #ddd;" class="row">
   <div class="col-md-10">
-    <div style="border-right: 3px solid #ddd;"><div style="padding: 10px 10px;">
-      <h2 class="text-center">Round 1 / Booster Pack 1 / 1st Time Around</h2>
-      <hr style="border-color: #aaa;" />
-      <div class="spoiledcard" id="a1"> <img src="http://media.wizards.com/images/magic/tcg/products/ktk/8arg43u984398yf/en_w1q972s8hn.png"></div>
-      <div class="spoiledcard" id="a2"> <img src="http://media.wizards.com/images/magic/tcg/products/ktk/8arg43u984398yf/en_w1q972s8hn.png"></div>
-      <div class="spoiledcard" id="a3"> <img src="http://media.wizards.com/images/magic/tcg/products/ktk/8arg43u984398yf/en_w1q972s8hn.png"></div>
-      <div class="spoiledcard" id="a4"> <img src="http://media.wizards.com/images/magic/tcg/products/ktk/8arg43u984398yf/en_w1q972s8hn.png"></div>
-      <div class="spoiledcard" id="a5"> <img src="http://media.wizards.com/images/magic/tcg/products/ktk/8arg43u984398yf/en_w1q972s8hn.png"></div>
-      <div class="spoiledcard" id="a6"> <img src="http://media.wizards.com/images/magic/tcg/products/ktk/8arg43u984398yf/en_w1q972s8hn.png"></div>
-      <div class="spoiledcard" id="a7"> <img src="http://media.wizards.com/images/magic/tcg/products/ktk/8arg43u984398yf/en_w1q972s8hn.png"></div>
-      <div class="spoiledcard" id="a8"> <img src="http://media.wizards.com/images/magic/tcg/products/ktk/8arg43u984398yf/en_w1q972s8hn.png"></div>
-      <div class="spoiledcard" id="a9"> <img src="http://media.wizards.com/images/magic/tcg/products/ktk/8arg43u984398yf/en_w1q972s8hn.png"></div>
+    <div style="overflow-y: auto;"><div style="padding-top: 60px;">
+      <div class="img-rounded" style="margin-left: 10px; margin-bottom: 20px; padding: 10px; background-color: white; border: 2px solid #eee;">
+        <h2 class="text-center">Round 1 / Booster Pack 1 / 1st Time Around</h2>
+        <div class="spoiledcard" id="a1"> <img src="http://media.wizards.com/images/magic/tcg/products/ktk/8arg43u984398yf/en_w1q972s8hn.png"></div>
+        <div class="spoiledcard" id="a2"> <img src="http://media.wizards.com/images/magic/tcg/products/ktk/8arg43u984398yf/en_w1q972s8hn.png"></div>
+        <div class="spoiledcard" id="a3"> <img src="http://media.wizards.com/images/magic/tcg/products/ktk/8arg43u984398yf/en_w1q972s8hn.png"></div>
+        <div class="spoiledcard" id="a4"> <img src="http://media.wizards.com/images/magic/tcg/products/ktk/8arg43u984398yf/en_w1q972s8hn.png"></div>
+        <div class="spoiledcard" id="a5"> <img src="http://media.wizards.com/images/magic/tcg/products/ktk/8arg43u984398yf/en_w1q972s8hn.png"></div>
+        <div class="spoiledcard" id="a6"> <img src="http://media.wizards.com/images/magic/tcg/products/ktk/8arg43u984398yf/en_w1q972s8hn.png"></div>
+        <div class="spoiledcard" id="a7"> <img src="http://media.wizards.com/images/magic/tcg/products/ktk/8arg43u984398yf/en_w1q972s8hn.png"></div>
+        <div class="spoiledcard" id="a8"> <img src="http://media.wizards.com/images/magic/tcg/products/ktk/8arg43u984398yf/en_w1q972s8hn.png"></div>
+        <div class="spoiledcard" id="a9"> <img src="http://media.wizards.com/images/magic/tcg/products/ktk/8arg43u984398yf/en_w1q972s8hn.png"></div>
+        <div class="clearfix"></div>
+      </div>
     </div></div>
   </div>
   <div class="col-md-2">
-    <div style="padding-right: 12px;">
-      <h4>Draftees</h4>
-      <ul class="list-group">
-        <li class="list-group-item">user1@example.com
-          <img width="20" height="20" src="/static/deck_icon.jpg"></img>
-          <img width="20" height="20" src="/static/deck_icon.jpg"></img>
-        </li>
-        <li class="list-group-item text-success">
-          <i class="glyphicon glyphicon-play text-success"></i>
-          user2@example.com
-        </li>
-        <li class="list-group-item">user3@example.com
-          <img width="20" height="20" src="/static/deck_icon.jpg"></img>
-          <img width="20" height="20" src="/static/deck_icon.jpg"></img>
-        </li>
-        <li class="list-group-item">user4@example.com
-          <img width="20" height="20" src="/static/deck_icon.jpg"></img>
-        </li>
-        <li class="list-group-item">user5@example.com
-          <img width="20" height="20" src="/static/deck_icon.jpg"></img>
-        </li>
-        <li class="list-group-item">user6@example.com
-          <img width="20" height="20" src="/static/deck_icon.jpg"></img>
-        </li>
-        <li class="list-group-item">user7@example.com
-        </li>
-      </ul>
-      <div class="form-group">
-        <fieldset>
-          <label>Invite Draftee</label>
-            <div class="input-group">
-              <input type="text" class="form-control" placeholder="user@example.com">
-            <span class="input-group-btn">
-              <button type="button" class="btn btn-success">
-                <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Add
-              </button>
-            </span>
-            </div><!-- /input-group -->
-        </fieldset>
+    <div style="padding-right: 12px; padding-top: 60px;">
+      <div class="img-rounded" style="padding: 10px; background-color: white; border: 2px solid #eee;">
+        <h4>Draftees</h4>
+        <ul class="list-group">
+          <li class="list-group-item">user1@example.com
+            <img width="20" height="20" src="/static/deck_icon.jpg"></img>
+            <img width="20" height="20" src="/static/deck_icon.jpg"></img>
+          </li>
+          <li class="list-group-item text-success">
+            <i class="glyphicon glyphicon-play text-success"></i>
+            user2@example.com
+          </li>
+          <li class="list-group-item">user3@example.com
+            <img width="20" height="20" src="/static/deck_icon.jpg"></img>
+            <img width="20" height="20" src="/static/deck_icon.jpg"></img>
+          </li>
+          <li class="list-group-item">user4@example.com
+            <img width="20" height="20" src="/static/deck_icon.jpg"></img>
+          </li>
+          <li class="list-group-item">user5@example.com
+            <img width="20" height="20" src="/static/deck_icon.jpg"></img>
+          </li>
+          <li class="list-group-item">user6@example.com
+            <img width="20" height="20" src="/static/deck_icon.jpg"></img>
+          </li>
+          <li class="list-group-item">user7@example.com
+          </li>
+        </ul>
+        <div class="form-group">
+          <fieldset>
+            <label>Invite Draftee</label>
+              <div class="input-group">
+                <input type="text" class="form-control" placeholder="user@example.com">
+              <span class="input-group-btn">
+                <button type="button" class="btn btn-success">
+                  <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Add
+                </button>
+              </span>
+              </div><!-- /input-group -->
+          </fieldset>
+        </div>
       </div>
     </div>
   </div>
