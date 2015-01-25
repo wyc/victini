@@ -82,13 +82,13 @@ func NewDraft(name string, emails []string) *Draft {
 	}
 }
 
-type StartDraftReq struct {
+type CreateDraftReq struct {
 	Name   string
 	Emails []string
 }
 
-func serveStartDraft(w http.ResponseWriter, r *http.Request) error {
-	log.Println("Start draft request from", r.RemoteAddr, ":", r.URL)
+func serveCreateDraft(w http.ResponseWriter, r *http.Request) error {
+	log.Println("Create draft request from", r.RemoteAddr, ":", r.URL)
 	user, err := LoggedInUser(r)
 	if err != nil {
 		log.Println("User not logged in")
