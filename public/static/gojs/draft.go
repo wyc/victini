@@ -9,27 +9,21 @@ var jQuery = jquery.NewJQuery
 
 func main() {
 
-	// TODO don't hardcode these
-	var inputs = []string{"a1", "a2", "a3"}
-
 	//show jQuery Version on console:
 	print("Your current jQuery version is: " + jQuery().Jquery)
 	print("asdf")
 
-	for _, cardId := range inputs {
-		selector := "div#" + cardId
-		//catch keyup events on input#name element:
-		jQuery(selector).On(jquery.CLICK, func(e jquery.Event) {
-
-			print(e.Target)
-			img := jQuery(selector).Children("img")
-			btn := jQuery(selector).Children("button")
-			print(img)
-            if img.Is(":visible") {
-                img.FadeOut(func(){
-                    btn.Show()
-                })
-            }
-		})
-	}
+	spoiledCards := jQuery("div.spoiledCards").Children(".spoiledcard")
+	spoiledCards.On(jquery.CLICK, func(e jquery.Event) {
+		spoiledCard := jQuery(e.CurrentTarget)
+		print(e.Target)
+		img := spoiledCard.Children("img")
+		btn := spoiledCard.Children("button")
+		print(img)
+		if img.Is(":visible") {
+			img.FadeOut(func() {
+				btn.Show()
+			})
+		}
+	})
 }

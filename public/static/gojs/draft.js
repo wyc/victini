@@ -3046,37 +3046,29 @@ $packages["github.com/gopherjs/jquery"] = (function() {
 	return $pkg;
 })();
 $packages["main"] = (function() {
-	var $pkg = {}, jquery, sliceType, sliceType$1, funcType, funcType$1, jQuery, main;
+	var $pkg = {}, jquery, sliceType, funcType, funcType$1, jQuery, main;
 	jquery = $packages["github.com/gopherjs/jquery"];
-	sliceType = $sliceType($String);
-	sliceType$1 = $sliceType($emptyInterface);
+	sliceType = $sliceType($emptyInterface);
 	funcType = $funcType([jquery.Event], [], false);
 	funcType$1 = $funcType([], [], false);
 	main = function() {
-		var _i, _ref, cardId, inputs, selector;
-		inputs = new sliceType(["a1", "a2", "a3"]);
-		console.log("Your current jQuery version is: " + $internalize(jQuery(new sliceType$1([])).o.jquery, $String));
+		var spoiledCards;
+		console.log("Your current jQuery version is: " + $internalize(jQuery(new sliceType([])).o.jquery, $String));
 		console.log("asdf");
-		_ref = inputs;
-		_i = 0;
-		while (_i < _ref.$length) {
-			selector = [undefined];
-			cardId = ((_i < 0 || _i >= _ref.$length) ? $throwRuntimeError("index out of range") : _ref.$array[_ref.$offset + _i]);
-			selector[0] = "div#" + cardId;
-			jQuery(new sliceType$1([new $String(selector[0])])).On(new sliceType$1([new $String("click"), new funcType((function(selector) { return function(e) {
-				var btn, img;
-				console.log(e.Object.target);
-				img = $clone(jQuery(new sliceType$1([new $String(selector[0])])).Children(new $String("img")), jquery.JQuery);
-				btn = $clone(jQuery(new sliceType$1([new $String(selector[0])])).Children(new $String("button")), jquery.JQuery);
-				console.log(img);
-				if (img.Is(new sliceType$1([new $String(":visible")]))) {
-					img.FadeOut(new sliceType$1([new funcType$1((function(selector) { return function() {
-						btn.Show();
-					}; })(selector))]));
-				}
-			}; })(selector))]));
-			_i++;
-		}
+		spoiledCards = $clone(jQuery(new sliceType([new $String("div.spoiledCards")])).Children(new $String(".spoiledcard")), jquery.JQuery);
+		spoiledCards.On(new sliceType([new $String("click"), new funcType((function(e) {
+			var btn, img, spoiledCard;
+			spoiledCard = $clone(jQuery(new sliceType([new $js.container.ptr(e.Object.currentTarget)])), jquery.JQuery);
+			console.log(e.Object.target);
+			img = $clone(spoiledCard.Children(new $String("img")), jquery.JQuery);
+			btn = $clone(spoiledCard.Children(new $String("button")), jquery.JQuery);
+			console.log(img);
+			if (img.Is(new sliceType([new $String(":visible")]))) {
+				img.FadeOut(new sliceType([new funcType$1((function() {
+					btn.Show();
+				}))]));
+			}
+		}))]));
 	};
 	$pkg.$init = function() {
 		$pkg.$init = function() {};
