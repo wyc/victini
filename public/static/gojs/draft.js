@@ -3046,11 +3046,12 @@ $packages["github.com/gopherjs/jquery"] = (function() {
 	return $pkg;
 })();
 $packages["main"] = (function() {
-	var $pkg = {}, jquery, sliceType, sliceType$1, funcType, jQuery, main;
+	var $pkg = {}, jquery, sliceType, sliceType$1, funcType, funcType$1, jQuery, main;
 	jquery = $packages["github.com/gopherjs/jquery"];
 	sliceType = $sliceType($String);
 	sliceType$1 = $sliceType($emptyInterface);
 	funcType = $funcType([jquery.Event], [], false);
+	funcType$1 = $funcType([], [], false);
 	main = function() {
 		var _i, _ref, cardId, inputs, selector;
 		inputs = new sliceType(["a1", "a2", "a3"]);
@@ -3069,11 +3070,9 @@ $packages["main"] = (function() {
 				btn = $clone(jQuery(new sliceType$1([new $String(selector[0])])).Children(new $String("button")), jquery.JQuery);
 				console.log(img);
 				if (img.Is(new sliceType$1([new $String(":visible")]))) {
-					img.Hide();
-					btn.Show();
-				} else {
-					img.Show();
-					btn.Hide();
+					img.FadeOut(new sliceType$1([new funcType$1((function(selector) { return function() {
+						btn.Show();
+					}; })(selector))]));
 				}
 			}; })(selector))]));
 			_i++;

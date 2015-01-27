@@ -25,13 +25,11 @@ func main() {
 			img := jQuery(selector).Children("img")
 			btn := jQuery(selector).Children("button")
 			print(img)
-			if img.Is(":visible") {
-				img.Hide()
-				btn.Show()
-			} else {
-				img.Show()
-				btn.Hide()
-			}
+            if img.Is(":visible") {
+                img.FadeOut(func(){
+                    btn.Show()
+                })
+            }
 		})
 	}
 }
