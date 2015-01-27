@@ -13,7 +13,7 @@ import (
 //go:generate gopherjs build -o public/static/gojs/draft.js public/static/gojs/draft.go
 
 const (
-	DB_URL  = "localhost"
+	DB_URL  = "127.0.0.1"
 	DB_NAME = "draft"
 	LISTEN  = ":8000"
 )
