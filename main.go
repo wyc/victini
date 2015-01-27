@@ -10,6 +10,8 @@ import (
 	"labix.org/v2/mgo"
 )
 
+//go:generate gopherjs build -o public/static/gojs/draft.js public/static/gojs/draft.go
+
 const (
 	DB_URL  = "localhost"
 	DB_NAME = "draft"
