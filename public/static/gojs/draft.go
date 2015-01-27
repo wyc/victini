@@ -1,17 +1,45 @@
 package main
 
-import "github.com/gopherjs/jquery"
+import (
+	"fmt"
+	"time"
+
+	"github.com/gopherjs/jquery"
+)
 
 //go:generate gopherjs build draft.go
 
 //convenience:
 var jQuery = jquery.NewJQuery
 
+func startCountdown(countdown jquery.JQuery, selectedCardId string) {
+	counts := make(chan int)
+	go func() {
+		for i := 10; i > 0; i-- {
+			counts <- i
+			<-time.After(1 * time.Second)
+		}
+		close(counts)
+	}()
+
+	for {
+		num, ok := <-counts
+		if !ok {
+			break
+		}
+		countdown.SetText(fmt.Sprintf("%d seconds remaining", num))
+	}
+	countdown.SetText("asdf")
+    jquery.Post("/draft/1", selectedCardId, func(data interface{}){
+        print("got!")
+        print(fmt.Sprintf("%+v", data))
+    })
+}
+
 func main() {
 
 	//show jQuery Version on console:
 	print("Your current jQuery version is: " + jQuery().Jquery)
-	print("asdf")
 
 	spoiledCards := jQuery("div.spoiledCards").Children(".spoiledcard")
 	undoButtons := jQuery(".pick-btn")
@@ -19,14 +47,18 @@ func main() {
 		spoiledCard := jQuery(e.CurrentTarget)
 		img := spoiledCard.Children("img")
 		btn := spoiledCard.Children("button")
+		countdown := jQuery(spoiledCard).Children(".countdown-secs")
 		if img.Is(":visible") {
 			img.FadeOut(func() {
 				btn.Show()
+				countdown.Show()
+				go startCountdown(countdown, spoiledCard.Attr("id"))
 			})
 		}
 	})
 
 	undoButtons.On(jquery.CLICK, func(e jquery.Event) {
-        // TODO actually undo the pick
+		jQuery(".countdown-secs")
+		// TODO actually undo the pick
 	})
 }
