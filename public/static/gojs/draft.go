@@ -14,6 +14,7 @@ func main() {
 	print("asdf")
 
 	spoiledCards := jQuery("div.spoiledCards").Children(".spoiledcard")
+	undoButtons := jQuery(".pick-btn")
 	spoiledCards.On(jquery.CLICK, func(e jquery.Event) {
 		spoiledCard := jQuery(e.CurrentTarget)
 		img := spoiledCard.Children("img")
@@ -23,5 +24,9 @@ func main() {
 				btn.Show()
 			})
 		}
+	})
+
+	undoButtons.On(jquery.CLICK, func(e jquery.Event) {
+        // TODO actually undo the pick
 	})
 }

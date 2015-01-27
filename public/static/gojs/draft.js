@@ -3052,10 +3052,11 @@ $packages["main"] = (function() {
 	funcType = $funcType([jquery.Event], [], false);
 	funcType$1 = $funcType([], [], false);
 	main = function() {
-		var spoiledCards;
+		var spoiledCards, undoButtons;
 		console.log("Your current jQuery version is: " + $internalize(jQuery(new sliceType([])).o.jquery, $String));
 		console.log("asdf");
 		spoiledCards = $clone(jQuery(new sliceType([new $String("div.spoiledCards")])).Children(new $String(".spoiledcard")), jquery.JQuery);
+		undoButtons = $clone(jQuery(new sliceType([new $String(".pick-btn")])), jquery.JQuery);
 		spoiledCards.On(new sliceType([new $String("click"), new funcType((function(e) {
 			var btn, img, spoiledCard;
 			spoiledCard = $clone(jQuery(new sliceType([new $js.container.ptr(e.Object.currentTarget)])), jquery.JQuery);
@@ -3066,6 +3067,9 @@ $packages["main"] = (function() {
 					btn.Show();
 				}))]));
 			}
+		}))]));
+		undoButtons.On(new sliceType([new $String("click"), new funcType((function(e) {
+			console.log("button was clicked!");
 		}))]));
 	};
 	$pkg.$init = function() {
