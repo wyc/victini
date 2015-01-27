@@ -3059,10 +3059,8 @@ $packages["main"] = (function() {
 		spoiledCards.On(new sliceType([new $String("click"), new funcType((function(e) {
 			var btn, img, spoiledCard;
 			spoiledCard = $clone(jQuery(new sliceType([new $js.container.ptr(e.Object.currentTarget)])), jquery.JQuery);
-			console.log(e.Object.target);
 			img = $clone(spoiledCard.Children(new $String("img")), jquery.JQuery);
 			btn = $clone(spoiledCard.Children(new $String("button")), jquery.JQuery);
-			console.log(img);
 			if (img.Is(new sliceType([new $String(":visible")]))) {
 				img.FadeOut(new sliceType([new funcType$1((function() {
 					btn.Show();

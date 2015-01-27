@@ -16,10 +16,8 @@ func main() {
 	spoiledCards := jQuery("div.spoiledCards").Children(".spoiledcard")
 	spoiledCards.On(jquery.CLICK, func(e jquery.Event) {
 		spoiledCard := jQuery(e.CurrentTarget)
-		print(e.Target)
 		img := spoiledCard.Children("img")
 		btn := spoiledCard.Children("button")
-		print(img)
 		if img.Is(":visible") {
 			img.FadeOut(func() {
 				btn.Show()
