@@ -34,6 +34,7 @@ div.spoiledcard.selected
     display: flex;
     align-items: center;
     justify-content: center;
+}
 
 div.pre-hidden {
     display: flex;
@@ -53,5 +54,8 @@ button.pick-btn {
     align-self: flex-end;
     font-weight: bold;
     font: #DEADBE;
-    display: none;
+}
+
+.countdown-secs {
+    font-weight: bold;
 }

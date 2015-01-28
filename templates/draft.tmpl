@@ -43,12 +43,10 @@
             {{range $idx, $card := .Data}}
             <div class="spoiledcard flex-container" id="a{{$idx}}">
                 <div class="flex-item">
-                    <div class="pre-hidden flex-container">
-                        <button name="Pick" class="btn btn-danger btn-lg pick-btn" style="display: none;">
-                            Undo Pick
-                        </button>
+                    <div class="pre-hidden flex-container" style="display: none;">
+                        <button name="Pick" class="btn btn-danger btn-lg pick-btn">Undo Pick</button>
                         <div class="countdown">
-                            <div class="countdown-secs countdows">X</div>
+                            <div class="countdown-secs">X</div>
                         </div>
                     </div>
                 </div>
@@ -106,6 +104,5 @@
     </div>
   </div>
 </div>
-<span style="display: hidden;" id="draftIdHex">{{.DraftIdHex}}</span>
 <script src="/static/gojs/draft.js"></script>
 {{end}}

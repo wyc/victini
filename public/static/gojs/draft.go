@@ -56,12 +56,12 @@ func main() {
 	undoButtons := jQuery(".pick-btn")
 	spoiledCards.On(jquery.CLICK, func(e jquery.Event) {
 		spoiledCard := jQuery(e.CurrentTarget)
+		preHidden := spoiledCard.Find(".pre-hidden")
 		img := spoiledCard.Children("img")
-		btn := spoiledCard.Find(".pick-btn")
 		countdown := jQuery(spoiledCard).Find(".countdown-secs")
 		if img.Is(":visible") {
 			img.FadeOut(func() {
-				btn.Show()
+				preHidden.Show()
 				countdown.Show()
 				go startCountdown(countdown, draftIdHex, spoiledCard.Attr("id"))
 			})
