@@ -12,8 +12,15 @@ import (
 
 //go:generate gopherjs build -o public/static/gojs/draft.js public/static/gojs/draft.go
 
+var DB_URL = os.Getenv("MONGODB_PORT_27017_TCP_ADDR")
+
+func init() {
+	if DB_URL == "" {
+		DB_URL = "127.0.0.1"
+	}
+}
+
 const (
-	DB_URL  = "127.0.0.1"
 	DB_NAME = "draft"
 	LISTEN  = ":8000"
 )
