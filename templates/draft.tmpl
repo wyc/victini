@@ -41,9 +41,17 @@
         <div class="spoiledcards">
             <!-- multiverse ID from http://localhost:8000/draft/1/fake_gallery.json -->
             {{range $idx, $card := .Data}}
-            <div class="spoiledcard" id="a{{$idx}}">
-                <span class="countdown-secs" style="display: none;">X</span>
-                <button name="Pick" class="btn btn-danger btn-lg pick-btn" style="display: none;">Undo Pick</button>
+            <div class="spoiledcard flex-container" id="a{{$idx}}">
+                <div class="flex-item">
+                    <div class="pre-hidden flex-container">
+                        <button name="Pick" class="btn btn-danger btn-lg pick-btn" style="display: none;">
+                            Undo Pick
+                        </button>
+                        <div class="countdown">
+                            <div class="countdown-secs countdows">X</div>
+                        </div>
+                    </div>
+                </div>
                 <img class="cardimage" src="http://mtgimage.com/multiverseid/{{.Multiverseid}}.jpg">
             </div>
             {{end}}

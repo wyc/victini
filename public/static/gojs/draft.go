@@ -27,13 +27,13 @@ func startCountdown(countdown jquery.JQuery, selectedCardId string) {
 		if !ok {
 			break
 		}
-		countdown.SetText(fmt.Sprintf("%d seconds remaining", num))
+		countdown.SetText(fmt.Sprintf("%d", num))
 	}
-	countdown.SetText("asdf")
-    jquery.Post("/draft/1", selectedCardId, func(data interface{}){
-        print("got!")
-        print(fmt.Sprintf("%+v", data))
-    })
+	countdown.SetText("Card picked!")
+	jquery.Post("/draft/1", selectedCardId, func(data interface{}) {
+		print("got!")
+		print(fmt.Sprintf("%+v", data))
+	})
 }
 
 func main() {
@@ -46,8 +46,8 @@ func main() {
 	spoiledCards.On(jquery.CLICK, func(e jquery.Event) {
 		spoiledCard := jQuery(e.CurrentTarget)
 		img := spoiledCard.Children("img")
-		btn := spoiledCard.Children("button")
-		countdown := jQuery(spoiledCard).Children(".countdown-secs")
+		btn := spoiledCard.Find(".pick-btn")
+		countdown := jQuery(spoiledCard).Find(".countdown-secs")
 		if img.Is(":visible") {
 			img.FadeOut(func() {
 				btn.Show()

@@ -13750,8 +13750,6 @@ $packages["main"] = (function() {
 		var $args = arguments, $r, $s = 0, $this = this, _r, _tuple, counts, num, ok;
 		/* */ if($b !== $BLOCKING) { $nonblockingCall(); }; var $blocking_startCountdown = function() { s: while (true) { switch ($s) { case 0:
 		countdown = $clone(countdown, jquery.JQuery);
-		console.log("starting");
-		console.log("id is", selectedCardId);
 		counts = new chanType(0);
 		$go((function($b) {
 			var $args = arguments, $r, $s = 0, $this = this, _r, i;
@@ -13772,9 +13770,9 @@ $packages["main"] = (function() {
 			if (!ok) {
 				/* break; */ $s = 2; continue;
 			}
-			countdown.SetText(new $String(fmt.Sprintf("%d seconds remaining", new sliceType([new $Int(num)]))));
+			countdown.SetText(new $String(fmt.Sprintf("%d", new sliceType([new $Int(num)]))));
 		/* } */ $s = 1; continue; case 2:
-		countdown.SetText(new $String("asdf"));
+		countdown.SetText(new $String("Card picked!"));
 		jquery.Post(new sliceType([new $String("/draft/1"), new $String(selectedCardId), new funcType((function(data) {
 			console.log("got!");
 			console.log(fmt.Sprintf("%+v", new sliceType([data])));
@@ -13790,8 +13788,8 @@ $packages["main"] = (function() {
 			var btn, countdown, img, spoiledCard;
 			spoiledCard = $clone(jQuery(new sliceType([new $js.container.ptr(e.Object.currentTarget)])), jquery.JQuery);
 			img = $clone(spoiledCard.Children(new $String("img")), jquery.JQuery);
-			btn = $clone(spoiledCard.Children(new $String("button")), jquery.JQuery);
-			countdown = $clone(jQuery(new sliceType([new spoiledCard.constructor.elem(spoiledCard)])).Children(new $String(".countdown-secs")), jquery.JQuery);
+			btn = $clone(spoiledCard.Find(new sliceType([new $String(".pick-btn")])), jquery.JQuery);
+			countdown = $clone(jQuery(new sliceType([new spoiledCard.constructor.elem(spoiledCard)])).Find(new sliceType([new $String(".countdown-secs")])), jquery.JQuery);
 			if (img.Is(new sliceType([new $String(":visible")]))) {
 				img.FadeOut(new sliceType([new funcType$2((function() {
 					btn.Show();
