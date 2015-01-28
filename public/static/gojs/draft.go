@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"time"
 
@@ -11,6 +12,10 @@ import (
 
 //convenience:
 var jQuery = jquery.NewJQuery
+
+type CardPickRequest struct {
+	CardID string
+}
 
 func startCountdown(countdown jquery.JQuery, draftIdHex, selectedCardId string) {
 	counts := make(chan int)
@@ -30,9 +35,12 @@ func startCountdown(countdown jquery.JQuery, draftIdHex, selectedCardId string) 
 		countdown.SetText(fmt.Sprintf("%d", num))
 	}
 	countdown.SetText("Card picked!")
-	body := `{"CardID": ` + selectedCardId + `}`
+	bts, err := json.Marshal(CardPickRequest{CardID: selectedCardId})
+	if err != nil {
+		print(fmt.Sprintf("Error marshalling data: %s", err))
+	}
 	queryURL := "/draft/" + draftIdHex + "/pick"
-	jquery.Post(queryURL, body, func(data interface{}) {
+	jquery.Post(queryURL, string(bts), func(data interface{}) {
 		print("got!")
 		print(fmt.Sprintf("%+v", data))
 	})

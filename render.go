@@ -6,6 +6,7 @@ import (
 	"text/template"
 
 	"github.com/ChimeraCoder/godeckbrew"
+	"github.com/gorilla/mux"
 )
 
 type Page struct {
