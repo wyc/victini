@@ -46,16 +46,14 @@ div.pre-hidden {
 }
 
 button.pick-btn {
-    display: table-row
     align-self: flex-start;
+    margin: 20px;
 }
 
 .countdown {
-    align-self: flex-end;
     font-weight: bold;
     font: #DEADBE;
 }
 
 .countdown-secs {
-    font-weight: bold;
 }
