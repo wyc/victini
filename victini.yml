@@ -1,0 +1,25 @@
+---
+# Only necessary if running on machines with limited memory (under 512 MB)
+- hosts: victini
+  remote_user: root
+
+  tasks:
+  - name: Copy victini systemd service file
+    synchronize: src="victini.service" dest="/etc/systemd/system/victini.service"
+
+  - name: Copy mongodb systemd service file
+    synchronize: src="mongodb.service" dest="/etc/systemd/system/mongodb.service"
+
+  # Assumes RHEL-based server (Red Hat/Fedora/CentOS)
+  # Change to desired distro package manager
+  - name: Install docker
+    yum: name="docker-io" state="present"
+
+  - name: Make directory to mount as volume
+    file: path=/tmp/mail owner=root group=root mode=777 state=directory 
+
+  - name: Run systemd service for mongodb
+    service: name="mongodb" enabled="yes" state="started"
+
+  - name: Run systemd service for victini
+    service: name="victini" enabled="yes" state="started"
