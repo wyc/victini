@@ -1,0 +1,10 @@
+[Unit]
+Description=MongoDb
+After=docker.service
+
+[Service]
+ExecStart=/bin/bash -c '/usr/bin/docker start -a mongodb || /usr/bin/docker run --name mongodb -p 27017:27017 dockerfile/mongodb'
+ExecStop=/usr/bin/docker stop mongodb
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,15 @@
+[Unit]
+Description=Victini
+After=docker.service
+Requires=docker.service
+Requires=mongodb.service
+
+[Service]
+TimeoutStartSec=0
+ExecStartPre=-/usr/bin/docker kill victini
+ExecStartPre=-/usr/bin/docker rm victini
+ExecStartPre=/usr/bin/docker pull chimeracoder/victini
+ExecStart=bash -c "/usr/bin/docker run --name victini -p 8000:8000 --link mongodb:mongodb chimeracoder/victini"
+
+[Install]
+WantedBy=multi-user.target
