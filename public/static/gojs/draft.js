@@ -2146,7 +2146,7 @@ $packages["runtime"] = (function() {
 		if (!(goroot === undefined)) {
 			return $internalize(goroot, $String);
 		}
-		return "/usr/local/go";
+		return "/usr/lib/go";
 	};
 	SetFinalizer = $pkg.SetFinalizer = function(x, f) {
 	};
@@ -13746,8 +13746,8 @@ $packages["main"] = (function() {
 	funcType = $funcType([$emptyInterface], [], false);
 	funcType$1 = $funcType([jquery.Event], [], false);
 	funcType$2 = $funcType([], [], false);
-	startCountdown = function(countdown, selectedCardId, $b) {
-		var $args = arguments, $r, $s = 0, $this = this, _r, _tuple, counts, num, ok;
+	startCountdown = function(countdown, draftIdHex, selectedCardId, $b) {
+		var $args = arguments, $r, $s = 0, $this = this, _r, _tuple, body, counts, num, ok, queryURL;
 		/* */ if($b !== $BLOCKING) { $nonblockingCall(); }; var $blocking_startCountdown = function() { s: while (true) { switch ($s) { case 0:
 		countdown = $clone(countdown, jquery.JQuery);
 		counts = new chanType(0);
@@ -13773,15 +13773,18 @@ $packages["main"] = (function() {
 			countdown.SetText(new $String(fmt.Sprintf("%d", new sliceType([new $Int(num)]))));
 		/* } */ $s = 1; continue; case 2:
 		countdown.SetText(new $String("Card picked!"));
-		jquery.Post(new sliceType([new $String("/draft/1"), new $String(selectedCardId), new funcType((function(data) {
+		body = "{\"CardID\": " + selectedCardId + "}";
+		queryURL = "/draft/" + draftIdHex + "/pick";
+		jquery.Post(new sliceType([new $String(queryURL), new $String(body), new funcType((function(data) {
 			console.log("got!");
 			console.log(fmt.Sprintf("%+v", new sliceType([data])));
 		}))]));
 		/* */ case -1: } return; } }; $blocking_startCountdown.$blocking = true; return $blocking_startCountdown;
 	};
 	main = function() {
-		var spoiledCards, undoButtons;
+		var draftIdHex, spoiledCards, undoButtons;
 		console.log("Your current jQuery version is: " + $internalize(jQuery(new sliceType([])).o.jquery, $String));
+		draftIdHex = jQuery(new sliceType([new $String("span#draftIdHex")])).Text();
 		spoiledCards = $clone(jQuery(new sliceType([new $String("div.spoiledCards")])).Children(new $String(".spoiledcard")), jquery.JQuery);
 		undoButtons = $clone(jQuery(new sliceType([new $String(".pick-btn")])), jquery.JQuery);
 		spoiledCards.On(new sliceType([new $String("click"), new funcType$1((function(e) {
@@ -13794,7 +13797,7 @@ $packages["main"] = (function() {
 				img.FadeOut(new sliceType([new funcType$2((function() {
 					btn.Show();
 					countdown.Show();
-					$go(startCountdown, [countdown, spoiledCard.Attr("id")]);
+					$go(startCountdown, [countdown, draftIdHex, spoiledCard.Attr("id")]);
 				}))]));
 			}
 		}))]));

@@ -12,7 +12,7 @@ import (
 //convenience:
 var jQuery = jquery.NewJQuery
 
-func startCountdown(countdown jquery.JQuery, selectedCardId string) {
+func startCountdown(countdown jquery.JQuery, draftIdHex, selectedCardId string) {
 	counts := make(chan int)
 	go func() {
 		for i := 10; i > 0; i-- {
@@ -30,7 +30,9 @@ func startCountdown(countdown jquery.JQuery, selectedCardId string) {
 		countdown.SetText(fmt.Sprintf("%d", num))
 	}
 	countdown.SetText("Card picked!")
-	jquery.Post("/draft/1", selectedCardId, func(data interface{}) {
+	body := `{"CardID": ` + selectedCardId + `}`
+	queryURL := "/draft/" + draftIdHex + "/pick"
+	jquery.Post(queryURL, body, func(data interface{}) {
 		print("got!")
 		print(fmt.Sprintf("%+v", data))
 	})
@@ -41,6 +43,7 @@ func main() {
 	//show jQuery Version on console:
 	print("Your current jQuery version is: " + jQuery().Jquery)
 
+	draftIdHex := jQuery("span#draftIdHex").Text()
 	spoiledCards := jQuery("div.spoiledCards").Children(".spoiledcard")
 	undoButtons := jQuery(".pick-btn")
 	spoiledCards.On(jquery.CLICK, func(e jquery.Event) {
@@ -52,7 +55,7 @@ func main() {
 			img.FadeOut(func() {
 				btn.Show()
 				countdown.Show()
-				go startCountdown(countdown, spoiledCard.Attr("id"))
+				go startCountdown(countdown, draftIdHex, spoiledCard.Attr("id"))
 			})
 		}
 	})

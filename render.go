@@ -9,7 +9,8 @@ import (
 )
 
 type Page struct {
-	Data interface{}
+	DraftIdHex string
+	Data       interface{}
 }
 
 func renderTemplate(w http.ResponseWriter, tmpl string, p *Page) {
@@ -34,7 +35,11 @@ func serveDraftPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	renderTemplate(w, "draft", &Page{Data: set.NewBoosterPack()})
+	vars := mux.Vars(r)
+	renderTemplate(w, "draft", &Page{
+		DraftIdHex: vars["DraftIdHex"],
+		Data:       set.NewBoosterPack(),
+	})
 }
 
 func serveFakeGallery(w http.ResponseWriter, r *http.Request) {
