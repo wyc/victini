@@ -40,6 +40,7 @@ func main() {
 	router.Handle("/draft/{DraftIdHex}/deck.json", DraftHandler(serveDeck))
 	router.Handle("/draft/{DraftIdHex}/gallery.json", DraftHandler(serveGallery))
 	router.Handle("/draft/{DraftIdHex}/card_pack_count.json", DraftHandler(serveCardPackCount))
+	router.Handle("/draft/{DraftIdHex}/pick", DraftHandler(servePick))
 	router.HandleFunc("/draft/{DraftIdHex}/fake_gallery.json", serveFakeGallery)
 
 	http.Handle("/static/", http.FileServer(http.Dir("public")))
