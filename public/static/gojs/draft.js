@@ -18429,7 +18429,7 @@ $packages["github.com/gopherjs/jquery"] = (function() {
 	return $pkg;
 })();
 $packages["main"] = (function() {
-	var $pkg = {}, json, fmt, jquery, time, CardPickRequest, chanType, sliceType, funcType, funcType$1, funcType$2, jQuery, startCountdown, main;
+	var $pkg = {}, json, fmt, jquery, time, CardPickRequest, sliceType, funcType, chanType, funcType$1, funcType$2, jQuery, pickCardDraft, startCountdown, main;
 	json = $packages["encoding/json"];
 	fmt = $packages["fmt"];
 	jquery = $packages["github.com/gopherjs/jquery"];
@@ -18438,11 +18438,28 @@ $packages["main"] = (function() {
 		this.$val = this;
 		this.CardID = CardID_ !== undefined ? CardID_ : "";
 	});
-	chanType = $chanType($Int, false, false);
 	sliceType = $sliceType($emptyInterface);
-	funcType = $funcType([$emptyInterface], [], false);
-	funcType$1 = $funcType([jquery.Event], [], false);
-	funcType$2 = $funcType([], [], false);
+	funcType = $funcType([], [], false);
+	chanType = $chanType($Int, false, false);
+	funcType$1 = $funcType([$emptyInterface], [], false);
+	funcType$2 = $funcType([jquery.Event], [], false);
+	pickCardDraft = function(e, draftIdHex) {
+		var countdown, img, preHidden, spoiledCard, spoiledCards;
+		e = $clone(e, jquery.Event);
+		spoiledCards = $clone(jQuery(new sliceType([new $String("div.spoiledCards")])).Children(new $String(".spoiledcard")), jquery.JQuery);
+		spoiledCards.Off(new sliceType([new $String("click")]));
+		spoiledCard = $clone(jQuery(new sliceType([new $js.container.ptr(e.Object.currentTarget)])), jquery.JQuery);
+		preHidden = $clone(spoiledCard.Find(new sliceType([new $String(".pre-hidden")])), jquery.JQuery);
+		img = $clone(spoiledCard.Children(new $String("img")), jquery.JQuery);
+		countdown = $clone(jQuery(new sliceType([new spoiledCard.constructor.elem(spoiledCard)])).Find(new sliceType([new $String(".countdown-secs")])), jquery.JQuery);
+		if (img.Is(new sliceType([new $String(":visible")]))) {
+			img.FadeOut(new sliceType([new funcType((function() {
+				preHidden.Show();
+				countdown.Show();
+				$go(startCountdown, [countdown, draftIdHex, spoiledCard.Attr("id")]);
+			}))]));
+		}
+	};
 	startCountdown = function(countdown, draftIdHex, selectedCardId, $b) {
 		var $args = arguments, $r, $s = 0, $this = this, _r, _tuple, _tuple$1, bts, counts, err, num, ok, queryURL, x;
 		/* */ if($b !== $BLOCKING) { $nonblockingCall(); }; var $blocking_startCountdown = function() { s: while (true) { switch ($s) { case 0:
@@ -18475,33 +18492,23 @@ $packages["main"] = (function() {
 			console.log(fmt.Sprintf("Error marshalling data: %s", new sliceType([err])));
 		}
 		queryURL = "/draft/" + draftIdHex + "/pick";
-		jquery.Post(new sliceType([new $String(queryURL), new $String($bytesToString(bts)), new funcType((function(data) {
+		jquery.Post(new sliceType([new $String(queryURL), new $String($bytesToString(bts)), new funcType$1((function(data) {
 			console.log("got!");
 			console.log(fmt.Sprintf("%+v", new sliceType([data])));
 		}))]));
 		/* */ case -1: } return; } }; $blocking_startCountdown.$blocking = true; return $blocking_startCountdown;
 	};
 	main = function() {
-		var draftIdHex, spoiledCards, undoButtons;
+		var draftIdHex, pickCard, spoiledCards, undoButtons;
 		console.log("Your current jQuery version is: " + $internalize(jQuery(new sliceType([])).o.jquery, $String));
 		draftIdHex = jQuery(new sliceType([new $String("span#draftIdHex")])).Text();
 		spoiledCards = $clone(jQuery(new sliceType([new $String("div.spoiledCards")])).Children(new $String(".spoiledcard")), jquery.JQuery);
 		undoButtons = $clone(jQuery(new sliceType([new $String(".pick-btn")])), jquery.JQuery);
-		spoiledCards.On(new sliceType([new $String("click"), new funcType$1((function(e) {
-			var countdown, img, preHidden, spoiledCard;
-			spoiledCard = $clone(jQuery(new sliceType([new $js.container.ptr(e.Object.currentTarget)])), jquery.JQuery);
-			preHidden = $clone(spoiledCard.Find(new sliceType([new $String(".pre-hidden")])), jquery.JQuery);
-			img = $clone(spoiledCard.Children(new $String("img")), jquery.JQuery);
-			countdown = $clone(jQuery(new sliceType([new spoiledCard.constructor.elem(spoiledCard)])).Find(new sliceType([new $String(".countdown-secs")])), jquery.JQuery);
-			if (img.Is(new sliceType([new $String(":visible")]))) {
-				img.FadeOut(new sliceType([new funcType$2((function() {
-					preHidden.Show();
-					countdown.Show();
-					$go(startCountdown, [countdown, draftIdHex, spoiledCard.Attr("id")]);
-				}))]));
-			}
-		}))]));
-		undoButtons.On(new sliceType([new $String("click"), new funcType$1((function(e) {
+		pickCard = (function(e) {
+			pickCardDraft(e, draftIdHex);
+		});
+		spoiledCards.On(new sliceType([new $String("click"), new funcType$2(pickCard)]));
+		undoButtons.On(new sliceType([new $String("click"), new funcType$2((function(e) {
 			jQuery(new sliceType([new $String(".countdown-secs")]));
 		}))]));
 	};

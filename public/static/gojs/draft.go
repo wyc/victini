@@ -17,6 +17,23 @@ type CardPickRequest struct {
 	CardID string
 }
 
+func pickCardDraft(e jquery.Event, draftIdHex string) {
+
+	spoiledCards := jQuery("div.spoiledCards").Children(".spoiledcard")
+	spoiledCards.Off(jquery.CLICK)
+	spoiledCard := jQuery(e.CurrentTarget)
+	preHidden := spoiledCard.Find(".pre-hidden")
+	img := spoiledCard.Children("img")
+	countdown := jQuery(spoiledCard).Find(".countdown-secs")
+	if img.Is(":visible") {
+		img.FadeOut(func() {
+			preHidden.Show()
+			countdown.Show()
+			go startCountdown(countdown, draftIdHex, spoiledCard.Attr("id"))
+		})
+	}
+}
+
 func startCountdown(countdown jquery.JQuery, draftIdHex, selectedCardId string) {
 	counts := make(chan int)
 	go func() {
@@ -54,20 +71,10 @@ func main() {
 	draftIdHex := jQuery("span#draftIdHex").Text()
 	spoiledCards := jQuery("div.spoiledCards").Children(".spoiledcard")
 	undoButtons := jQuery(".pick-btn")
-	spoiledCards.On(jquery.CLICK, func(e jquery.Event) {
-		spoiledCard := jQuery(e.CurrentTarget)
-		preHidden := spoiledCard.Find(".pre-hidden")
-		img := spoiledCard.Children("img")
-		countdown := jQuery(spoiledCard).Find(".countdown-secs")
-		if img.Is(":visible") {
-			img.FadeOut(func() {
-				preHidden.Show()
-				countdown.Show()
-				go startCountdown(countdown, draftIdHex, spoiledCard.Attr("id"))
-			})
-		}
-	})
-
+	pickCard := func(e jquery.Event) {
+		pickCardDraft(e, draftIdHex)
+	}
+	spoiledCards.On(jquery.CLICK, pickCard)
 	undoButtons.On(jquery.CLICK, func(e jquery.Event) {
 		jQuery(".countdown-secs")
 		// TODO actually undo the pick
