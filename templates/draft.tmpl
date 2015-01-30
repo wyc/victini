@@ -37,7 +37,8 @@
   <div class="col-md-10">
     <div style="overflow-y: auto;"><div style="padding-top: 60px;">
       <div class="img-rounded" style="margin-left: 10px; margin-bottom: 20px; padding: 10px; background-color: white; border: 2px solid #eee;">
-        <h2 class="text-center">Round 1 / Booster Pack 1 / 1st Time Around</h2>
+        {{if ne .DraftIdInt 3}}
+        <h2 class="text-center">Round 1 / Booster Pack {{.DraftIdInt}} / Pass 1</h2>
         <div class="spoiledcards">
             <!-- multiverse ID from http://localhost:8000/draft/1/fake_gallery.json -->
             {{range $idx, $card := .Data}}
@@ -55,6 +56,9 @@
             {{end}}
         </div>
         <div class="clearfix"></div>
+        {{else}}
+        <h2 class="text-center">Waiting on Round 1 / Booster Pack {{.DraftIdInt}} / Pass 1</h2>
+        {{end}}
       </div>
     </div></div>
   </div>
@@ -64,27 +68,37 @@
         <h4>Draftees</h4>
         <ul class="list-group">
           <li class="list-group-item">user1@example.com
-            <img width="20" height="20" src="/static/deck_icon.jpg"></img>
-            <img width="20" height="20" src="/static/deck_icon.jpg"></img>
           </li>
-          <li class="list-group-item text-success">
-            <i class="glyphicon glyphicon-play text-success"></i>
-            user2@example.com
+          <li class="list-group-item active">user2@example.com
+            {{if eq .DraftIdInt 1 }}
+            <img width="20" height="20" src="/static/deck_icon.png"></img>
+            <img width="20" height="20" src="/static/deck_icon.png"></img>
+            {{end}}
+            {{if eq .DraftIdInt 2 }}
+            <img width="20" height="20" src="/static/deck_icon.png"></img>
+            {{end}}
           </li>
           <li class="list-group-item">user3@example.com
-            <img width="20" height="20" src="/static/deck_icon.jpg"></img>
-            <img width="20" height="20" src="/static/deck_icon.jpg"></img>
+            {{if eq .DraftIdInt 2 }}
+            <img width="20" height="20" src="/static/deck_icon.png"></img>
+            {{end}}
+            {{if eq .DraftIdInt 3 }}
+            <img width="20" height="20" src="/static/deck_icon.png"></img>
+            <img width="20" height="20" src="/static/deck_icon.png"></img>
+            {{end}}
           </li>
           <li class="list-group-item">user4@example.com
-            <img width="20" height="20" src="/static/deck_icon.jpg"></img>
+            <img width="20" height="20" src="/static/deck_icon.png"></img>
+            <img width="20" height="20" src="/static/deck_icon.png"></img>
           </li>
           <li class="list-group-item">user5@example.com
-            <img width="20" height="20" src="/static/deck_icon.jpg"></img>
+            <img width="20" height="20" src="/static/deck_icon.png"></img>
           </li>
           <li class="list-group-item">user6@example.com
-            <img width="20" height="20" src="/static/deck_icon.jpg"></img>
+            <img width="20" height="20" src="/static/deck_icon.png"></img>
           </li>
           <li class="list-group-item">user7@example.com
+            <img width="20" height="20" src="/static/deck_icon.png"></img>
           </li>
         </ul>
         <div class="form-group">
@@ -104,5 +118,6 @@
     </div>
   </div>
 </div>
+<span id="draftIdInt" style="display: hidden;">{{.DraftIdInt}}</span>
 <script src="/static/gojs/draft.js"></script>
 {{end}}

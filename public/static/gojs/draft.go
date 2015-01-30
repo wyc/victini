@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/gopherjs/jquery"
+	"honnef.co/go/js/dom"
 )
 
 //go:generate gopherjs build draft.go
@@ -60,6 +61,16 @@ func pickCardDraft(e jquery.Event, draftIdHex string) {
 			print(fmt.Sprintf("%+v", data))
 		})
 
+		// LOL DEMO SHENANIGANS
+		next := "1"
+		switch jQuery("span#draftIdInt").Text() {
+		case "1":
+			next = "2"
+		case "2":
+			next = "3"
+		}
+		dom.GetWindow().Location().Href = "/draft/" + next
+
 	case <-undone:
 		preHidden.FadeOut(func() {
 			countdown.FadeOut(func() {
@@ -76,7 +87,7 @@ func pickCardDraft(e jquery.Event, draftIdHex string) {
 func startCountdown(countdown jquery.JQuery, draftIdHex, selectedCardId string, countdownExpired chan struct{}) {
 	counts := make(chan int)
 	go func() {
-		for i := 10; i > 0; i-- {
+		for i := 5; i > 0; i-- {
 			counts <- i
 			<-time.After(1 * time.Second)
 		}

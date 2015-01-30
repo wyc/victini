@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"strconv"
 	"text/template"
 
 	"github.com/ChimeraCoder/godeckbrew"
@@ -11,6 +12,7 @@ import (
 
 type Page struct {
 	DraftIdHex string
+	DraftIdInt int
 	Data       interface{}
 }
 
@@ -37,8 +39,14 @@ func serveDraftPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	vars := mux.Vars(r)
+
+	idInt, err := strconv.Atoi(vars["DraftIdHex"])
+	if err != nil {
+		idInt = 1
+	}
 	renderTemplate(w, "draft", &Page{
 		DraftIdHex: vars["DraftIdHex"],
+		DraftIdInt: idInt,
 		Data:       set.NewBoosterPack(),
 	})
 }
